@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef STRING_PARSER_H_
-#define STRING_PARSER_H_
+#ifndef STRING_PARSER_H
+#define STRING_PARSER_H
 
 
 #define _GUN_SOURCE
@@ -36,4 +36,4 @@ command_line str_filler (char* buf, const char* delim);
 void free_command_line(command_line* command);
 
 
-#endif /* STRING_PARSER_H_ */
+#endif /* STRING_PARSER_H */

@@ -4,7 +4,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include "STRING_PARSER_H"
+#include "string_parser.h"
+#include "command.h"
 
 int global_file;
 
