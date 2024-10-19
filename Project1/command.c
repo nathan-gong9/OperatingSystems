@@ -51,8 +51,6 @@ void makeDir(char *dirName){ /*for the mkdir command*/
 			mkdirCheck = 1;
 	}
 	closedir(dir);
-	
-	
 	if(mkdirCheck = 0){
 		write(global_file, "\n", sizeof("\n"));
 		write(global_file, cwd, strlen(cwd));

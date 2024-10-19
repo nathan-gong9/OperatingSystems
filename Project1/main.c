@@ -145,7 +145,7 @@ void executeLine(char *line, FILE *output){
         	else
         		write(global_file, "Error! Unsupported parameters for command: %s\n", cmd)
     	} else {
-        	write(global_file, "Error! Unrecognized command: %s \n", cmd);
+        	write(global_file, "opijsoidfjdsoijfsd Error! Unrecognized command: %s \n", cmd);
     	}
         
         //Exit if the exit command is entered
