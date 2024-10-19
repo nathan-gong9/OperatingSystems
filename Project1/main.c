@@ -3,16 +3,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include "string_parser.h"
 #include "command.h"
 
 int global_file;
 
+void executeLine(char* line);
+
 int main(int argc, char * argv[]){
 	
 	//What to do if we're executing the pseudo-shell in file mode
-	if(argv[1] == "-f" && argc == 3){
+	if(strcmp(argv[1], "-f") == 0 && argc == 3){
 			
 		//Read the file line by line
 		FILE *stream;
@@ -32,10 +35,6 @@ int main(int argc, char * argv[]){
         }
 		
     	global_file = open("testoutput.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    	if (global_file == NULL) {
-        	printf("Error opening file!\n");
-        	return 1;
-    	}
 
         while ((nread = getline(&line, &len, stream)) != -1) {
             fwrite(line, nread, 1, stdout);
@@ -90,19 +89,27 @@ void executeLine(char *line){
     char *command = NULL;
     char *arg1 = NULL;
     char *arg2 = NULL; 
+    char *dummy = NULL;
 
     command = malloc(100 * sizeof(char));
     arg1 = malloc(100 * sizeof(char));
     arg2 = malloc(100 * sizeof(char));
+    dummy = alloc(100 * sizeof(char));
+    
  
-    while (count <= commands.num_token) {
-    	printf(" % s\n", cmd);
-    	
-    	int argCount = sscanf(cmd, "%s %s %s", command, arg1, arg2);
+    while (count <= commands.num_token) {  	
+    	int argCount = sscanf(cmd, "%s %s %s %s", command, arg1, arg2, dummy);
     	char* parameterMessage = "Error! Unsupported parameters for command: ";
     	char* unrecognizedMessage = "Error! Unrecognized command: ";
-    	strcmp(parameterMessage, command);
-    	strcmp(unrecognizedMessage, command);
+    	char* argumentMessage = "Too many parameters: "
+    	strcat(parameterMessage, command);
+    	strcat(unrecognizedMessage, command);
+    	strcat(argumentMessage, command);
+    	
+    	if(argCount > 3){
+    		write(global_file, argumentMessage, strlen(argumentMessage));
+    		break;
+    	}
     	
         //identify the command and what to do with it.
         if (strcmp(command, "ls") == 0) {
@@ -151,8 +158,8 @@ void executeLine(char *line){
     	}
         
         //Exit if the exit command is entered
-        if(command == "exit"){
-        	exit;
+        if(strcmp(command, "exit") == 0){
+        	break;
         }
         	
         //iterate through command_list	
