@@ -44,7 +44,7 @@ int main(int argc, char * argv[]){
 
         free(line);
         fclose(stream);
-        fclose(output);
+        fclose(global_file);
         exit(EXIT_SUCCESS);
 	}
 	
@@ -87,68 +87,95 @@ void executeLine(char *line){
     }
     count++;
     
-    char arg1[50];
-    char arg2[50];
+    char *command = NULL;
+    char *arg1 = NULL;
+    char *arg2 = NULL; 
+
+    command = malloc(100 * sizeof(char));
+    arg1 = malloc(100 * sizeof(char));
+    arg2 = malloc(100 * sizeof(char));
  
     while (count <= commands.num_token) {
     	printf(" % s\n", cmd);
     	
-    	int argCount = sscanf(cmd, "%s %s %s", cmd, arg1, arg2);
+    	int argCount = sscanf(cmd, "%s %s %s", command, arg1, arg2);
+    	char* parameterMessage = "Error! Unsupported parameters for command: ";
+    	char* unrecognizedMessage = "Error! Unrecognized command: ";
+    	strcmp(parameterMessage, command);
+    	strcmp(unrecognizedMessage, command);
     	
         //identify the command and what to do with it.
-        if (strcmp(cmd, "ls") == 0) {
-        	if(arg1 != NULL)
-        		write(global_file, "Error! Unsupported parameters for command: %s\n", cmd);
+        if (strcmp(command, "ls") == 0) {
+        	if(arg1 != NULL){
+        		write(global_file, parameterMessage, strlen(parameterMessage));
+        	}
         	else
         		listDir();
-    	} else if (strcmp(cmd, "pwd") == 0) {
+    	} else if (strcmp(command, "pwd") == 0) {
     		if(arg1 != NULL)
-    			write(global_file, "Error! Unsupported parameters for command: %s\n", cmd);
+    			write(global_file, parameterMessage, strlen(parameterMessage));
     		else
         		showCurrentDir();
-    	} else if (strcmp(cmd, "mkdir") == 0) {
+    	} else if (strcmp(command, "mkdir") == 0) {
     		if(arg1 != NULL && arg2 == NULL)
     			makeDir(arg1);
     		else
-    			write(global_file, "Error! Unsupported parameters for command: %s\n", cmd);
-    	} else if (strcmp(cmd, "cd") == 0) {
+    			write(global_file, parameterMessage, strlen(parameterMessage));
+    	} else if (strcmp(command, "cd") == 0) {
     		if(arg1 != NULL && arg2 == NULL)
     			changeDir(arg1);
     		else
-    			write(global_file, "Error! Unsupported parameters for command: %s\n", cmd);
-    	} else if (strcmp(cmd, "cp") == 0) {
+    			write(global_file, parameterMessage, strlen(parameterMessage));
+    	} else if (strcmp(command, "cp") == 0) {
     		if(arg1 != NULL && arg2 != NULL)
         		copyFile(arg1, arg2);
         	else
-        		write(global_file, "Error! Unsupported parameters for command: %s\n", cmd);
-    	} else if (strcmp(cmd, "mv") == 0) {
+        		write(global_file, parameterMessage, strlen(parameterMessage));
+    	} else if (strcmp(command, "mv") == 0) {
     		if(arg1 != NULL && arg2 != NULL)
         		moveFile(arg1, arg2);
         	else
-        		write(global_file, "Error! Unsupported parameters for command: %s\n", cmd);
-    	} else if (strcmp(cmd, "rm") == 0) {
+        		write(global_file, parameterMessage, strlen(parameterMessage));
+    	} else if (strcmp(command, "rm") == 0) {
     		if(arg1 != NULL && arg2 == NULL)
         		deleteFile(arg1);
         	else
-        		write(global_file, "Error! Unsupported parameters for command: %s\n", cmd);
-    	} else if (strcmp(cmd, "cat") == 0 && arg1 != NULL) {
+        		write(global_file, parameterMessage, strlen(parameterMessage));
+    	} else if (strcmp(command, "cat") == 0 && arg1 != NULL) {
     		if(arg1 != NULL && arg2 == NULL)
         		displayFile(arg1);
         	else
-        		write(global_file, "Error! Unsupported parameters for command: %s\n", cmd);
+        		write(global_file, parameterMessage, strlen(parameterMessage));
     	} else {
-        	write(global_file, "Error! Unrecognized command: %s \n", cmd);
+        	write(global_file, unrecognizedMessage, strlen(unrecognizedMessage));
     	}
         
         //Exit if the exit command is entered
-        if(cmd == "exit"){
+        if(command == "exit"){
         	exit;
         }
         	
         //iterate through command_list	
         cmd = commands.command_list[count++];
+        
+        free(command);
+        free(arg1);
+        free(arg2);
+        
+        command = NULL;
+        arg1 = NULL;
+        arg2 = NULL;
+        
+        command = malloc(100 * sizeof(char));
+    	arg1 = malloc(100 * sizeof(char));
+    	arg2 = malloc(100 * sizeof(char));
+        
+        
     }
     
     free_command_line(&commands);
+    free(command);
+    free(arg1);
+    free(arg2);
 }
 
