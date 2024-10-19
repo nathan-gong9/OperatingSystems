@@ -30,21 +30,16 @@ int main(int argc, char * argv[]){
             exit(EXIT_FAILURE);
         }
 		
-		FILE *output = fopen("output.txt", "r");
+		FILE *output = fopen("testoutput.txt", "r");
 		if (file == NULL) {
         	printf("Error opening file!\n");
         	return 1;
     	}
-    	global_file = "output.txt";
-    	
-    	write(global_file, "FILE MODE", strlen("FILE MODE"));
+    	global_file = "testoutput.txt";
 
         while ((nread = getline(&line, &len, stream)) != -1) {
-            printf("Retrieved line of length %zd:\n", nread);
             fwrite(line, nread, 1, stdout);
             executeLine(line)
-            
-            
         }
 
         free(line);
@@ -69,10 +64,7 @@ int main(int argc, char * argv[]){
             exit(EXIT_FAILURE);
         }
         
-        write(global_file, "Interactive MODE", strlen("Interactive MODE"));
-        
         while ((nread = getline(&line, &len, stream)) != -1 && count < argc) {
-            printf("Retrieved line of length %zd:\n", nread);
             fwrite(line, nread, 1, stdout);
             executeLine(line);
         }
@@ -145,7 +137,7 @@ void executeLine(char *line, FILE *output){
         	else
         		write(global_file, "Error! Unsupported parameters for command: %s\n", cmd)
     	} else {
-        	write(global_file, "opijsoidfjdsoijfsd Error! Unrecognized command: %s \n", cmd);
+        	write(global_file, "Error! Unrecognized command: %s \n", cmd);
     	}
         
         //Exit if the exit command is entered
