@@ -10,7 +10,7 @@
 
 int global_file = STDOUT_FILENO;
 
-int main() {
+int testMain() {
 	char cwd[1024];
 	getcwd(cwd, sizeof(cwd));
 	write(global_file, cwd, strlen(cwd));
@@ -29,4 +29,6 @@ int main() {
 		count++;
 	}
 	closedir(dir);
+	
+	return 0;
 }
