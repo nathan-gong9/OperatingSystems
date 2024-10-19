@@ -43,7 +43,7 @@ int main(int argc, char * argv[]){
 
         free(line);
         fclose(stream);
-        fclose(global_file);
+        close(global_file);
         exit(EXIT_SUCCESS);
 	}
 	
@@ -94,14 +94,14 @@ void executeLine(char *line){
     command = malloc(100 * sizeof(char));
     arg1 = malloc(100 * sizeof(char));
     arg2 = malloc(100 * sizeof(char));
-    dummy = alloc(100 * sizeof(char));
+    dummy = malloc(100 * sizeof(char));
     
  
     while (count <= commands.num_token) {  	
     	int argCount = sscanf(cmd, "%s %s %s %s", command, arg1, arg2, dummy);
     	char* parameterMessage = "Error! Unsupported parameters for command: ";
     	char* unrecognizedMessage = "Error! Unrecognized command: ";
-    	char* argumentMessage = "Too many parameters: "
+    	char* argumentMessage = "Too many parameters: ";
     	strcat(parameterMessage, command);
     	strcat(unrecognizedMessage, command);
     	strcat(argumentMessage, command);
