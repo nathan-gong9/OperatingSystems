@@ -1,0 +1,19 @@
+/home/me/OperatingSystems/OperatingSystems/Project1
+mkdir: cannot create directory ‘test': File exists
+Error: Unrecognized command: sfjlksagjlks
+.. . 
+/home/me/OperatingSystems/OperatingSystems/Project1/test
+/home/me/OperatingSystems/OperatingSystems/Project1/test
+.. . input.txt 
+pwd ; mkdir test ; cd test
+sfjlksagjlks;ls; pwd;
+cd .. ; cd test ; pwd
+cp ../input.txt . ; ls ; cat input.txt
+mv input.txt del.txt ; pwd ; ls
+rm del.txt ; ls
+cd .. ; pwd
+ls/home/me/OperatingSystems/OperatingSystems/Project1/test
+.. . del.txt 
+.. . 
+/home/me/OperatingSystems/OperatingSystems/Project1
+Makefile .DS_Store command.c string_parser.c .. pseudo-shell command.h . test testdirectory2 example-output.txt testcommand.c testcommand testdirectory3 string_parser.h testdirectory test_script.sh output.txt main.c input.txt 
