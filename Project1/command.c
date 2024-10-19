@@ -23,7 +23,6 @@ void listDir(){ /*for the ls command*/
 	while((read_dir = readdir(dir)) != NULL){
 			write(global_file, read_dir->d_name, strlen(read_dir->d_name));
 			write(global_file, "\n", strlen("\n"));
-		count++;
 	}
 	closedir(dir);
 }
@@ -37,14 +36,34 @@ void showCurrentDir(){ /*for the pwd command*/
 void makeDir(char *dirName){ /*for the mkdir command*/
 	char cwd[1024];
 	getcwd(cwd, sizeof(cwd));
+	int mkdirCheck = 0;
 
 	strcat(cwd, "/");
 	strcat(cwd, dirName);
-	write(global_file, "\n", sizeof("\n"));
-	write(global_file, cwd, strlen(cwd));
-	write(global_file, "\n", sizeof("\n"));
 	
-	mkdir(cwd, 0755);
+	DIR *dir;
+	dir = opendir(cwd);
+	struct dirent *read_dir;
+	
+	write(global_file, "\n", strlen("\n"));
+	while((read_dir = readdir(dir)) != NULL){
+		if(strcmp(read_dir->d_name, dirName) == 0)
+			mkdirCheck = 1;
+	}
+	closedir(dir);
+	
+	
+	if(mkdirCheck = 0){
+		write(global_file, "\n", sizeof("\n"));
+		write(global_file, cwd, strlen(cwd));
+		write(global_file, "\n", sizeof("\n"));
+		mkdir(cwd, 0755);
+	}
+	else{
+		write(global_file, "\n", sizeof("\n"));
+		write(global_file, "Directory already exists!", strlen("Directory already exists!"));
+		write(global_file, "\n", sizeof("\n"));
+	}
 }
 
 void changeDir(char *dirName){ /*for the cd command*/

@@ -36,6 +36,8 @@ int main(int argc, char * argv[]){
         	return 1;
     	}
     	global_file = "output.txt";
+    	
+    	write(global_file, "FILE MODE", strlen("FILE MODE"));
 
         while ((nread = getline(&line, &len, stream)) != -1) {
             printf("Retrieved line of length %zd:\n", nread);
@@ -67,10 +69,12 @@ int main(int argc, char * argv[]){
             exit(EXIT_FAILURE);
         }
         
+        write(global_file, "Interactive MODE", strlen("Interactive MODE"));
+        
         while ((nread = getline(&line, &len, stream)) != -1 && count < argc) {
             printf("Retrieved line of length %zd:\n", nread);
             fwrite(line, nread, 1, stdout);
-            
+            executeLine(line);
         }
         
         free(line);
@@ -91,7 +95,6 @@ void executeLine(char *line, FILE *output){
     }
     count++;
     
-    char command[50];
     char arg1[50];
     char arg2[50];
  
@@ -103,44 +106,44 @@ void executeLine(char *line, FILE *output){
         //identify the command and what to do with it.
         if (strcmp(cmd, "ls") == 0) {
         	if(arg1 != NULL)
-        		write(global_file, "Error! Unsupported parameters for command: %s\n", command);
+        		write(global_file, "Error! Unsupported parameters for command: %s\n", cmd);
         	else
         		listDir();
     	} else if (strcmp(cmd, "pwd") == 0) {
     		if(arg1 != NULL)
-    			write(global_file, "Error! Unsupported parameters for command: %s\n", command)
+    			write(global_file, "Error! Unsupported parameters for command: %s\n", cmd)
     		else
         		showCurrentDir();
     	} else if (strcmp(cmd, "mkdir") == 0) {
     		if(arg1 != NULL && arg2 == NULL)
     			makeDir(arg1);
     		else
-    			write(global_file, "Error! Unsupported parameters for command: %s\n", command)
+    			write(global_file, "Error! Unsupported parameters for command: %s\n", cmd)
     	} else if (strcmp(cmd, "cd") == 0) {
     		if(arg1 != NULL && arg2 == NULL)
     			changeDir(arg1);
     		else
-    			write(global_file, "Error! Unsupported parameters for command: %s\n", command)
+    			write(global_file, "Error! Unsupported parameters for command: %s\n", cmd)
     	} else if (strcmp(cmd, "cp") == 0) {
     		if(arg1 != NULL && arg2 != NULL)
         		copyFile(arg1, arg2);
         	else
-        		write(global_file, "Error! Unsupported parameters for command: %s\n", command)
+        		write(global_file, "Error! Unsupported parameters for command: %s\n", cmd)
     	} else if (strcmp(cmd, "mv") == 0) {
     		if(arg1 != NULL && arg2 != NULL)
         		moveFile(arg1, arg2);
         	else
-        		write(global_file, "Error! Unsupported parameters for command: %s\n", command)
+        		write(global_file, "Error! Unsupported parameters for command: %s\n", cmd)
     	} else if (strcmp(cmd, "rm") == 0) {
     		if(arg1 != NULL && arg2 == NULL)
         		deleteFile(arg1);
         	else
-        		write(global_file, "Error! Unsupported parameters for command: %s\n", command)
+        		write(global_file, "Error! Unsupported parameters for command: %s\n", cmd)
     	} else if (strcmp(cmd, "cat") == 0 && arg1 != NULL) {
     		if(arg1 != NULL && arg2 == NULL)
         		displayFile(arg1);
         	else
-        		write(global_file, "Error! Unsupported parameters for command: %s\n", command)
+        		write(global_file, "Error! Unsupported parameters for command: %s\n", cmd)
     	} else {
         	write(global_file, "Error! Unrecognized command: %s \n", cmd);
     	}
