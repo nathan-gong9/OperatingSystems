@@ -13,47 +13,9 @@ int global_file;
 void executeLine(char* line);
 
 int main(int argc, char * argv[]){
-	printf("RUNNING");
-	
-	//What to do if we're executing the pseudo-shell in file mode
-	if(strcmp(argv[1], "-f") == 0 && argc == 3){
-			
-		//Read the file line by line
-		FILE *stream;
-        char *line = NULL;
-        line = malloc(1024 * sizeof(char));
-        size_t len = 0;
-        ssize_t nread;
-
-        if (argc != 3) {
-            fprintf(stderr, "Usage: %s <file>\n", argv[0]);
-            exit(EXIT_FAILURE);
-        }
-
-        stream = fopen(argv[2], "r");
-        if (stream == NULL) {
-            perror("fopen");
-            exit(EXIT_FAILURE);
-        }
-		
-    	global_file = open("testoutput.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-
-        while ((nread = getline(&line, &len, stream)) != -1) {
-            fwrite(line, nread, 1, stdout);
-            executeLine(line);
-            line = NULL;
-        	line = malloc(1024 * sizeof(char));
-        }
-
-        free(line);
-        fclose(stream);
-        close(global_file);
-        exit(EXIT_SUCCESS);
-	}
 	
 	//What to do if we execute the pseudo-shell in interactive mode
-	else if (argc == 1){
-		printf("INTERACTIVE MODE");
+	if (argc == 1){
 		global_file = STDOUT_FILENO;
 	
         char *line = NULL;
@@ -72,6 +34,47 @@ int main(int argc, char * argv[]){
         }
         free(line);
         exit(EXIT_SUCCESS);
+	}
+	
+	//What to do if we're executing the pseudo-shell in file mode
+	else if (argc == 3){
+		if(strcmp(argv[1], "-f") == 0){
+			
+			//Read the file line by line
+			FILE *stream;
+        	char *line = NULL;
+        	line = malloc(1024 * sizeof(char));
+        	size_t len = 0;
+        	ssize_t nread;
+
+        	if (argc != 3) {
+            	fprintf(stderr, "Usage: %s <file>\n", argv[0]);
+            	exit(EXIT_FAILURE);
+        	}
+
+        	stream = fopen(argv[2], "r");
+        	if (stream == NULL) {
+            	perror("fopen");
+            	exit(EXIT_FAILURE);
+        	}
+		
+    		global_file = open("testoutput.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+
+        	while ((nread = getline(&line, &len, stream)) != -1) {
+            	fwrite(line, nread, 1, stdout);
+            	executeLine(line);
+            	line = NULL;
+        		line = malloc(1024 * sizeof(char));
+        	}
+
+        	free(line);
+        	fclose(stream);
+        	close(global_file);
+        	exit(EXIT_SUCCESS);
+		}
+		else{
+			exit(EXIT_FAILURE);
+		}
 	}
 }
 
