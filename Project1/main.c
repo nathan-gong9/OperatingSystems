@@ -20,6 +20,7 @@ int main(int argc, char * argv[]){
 		//Read the file line by line
 		FILE *stream;
         char *line = NULL;
+        line = malloc(1024 * sizeof(char));
         size_t len = 0;
         ssize_t nread;
 
@@ -39,6 +40,8 @@ int main(int argc, char * argv[]){
         while ((nread = getline(&line, &len, stream)) != -1) {
             fwrite(line, nread, 1, stdout);
             executeLine(line);
+            line = NULL;
+        	line = malloc(1024 * sizeof(char));
         }
 
         free(line);
@@ -51,25 +54,21 @@ int main(int argc, char * argv[]){
 	else if (argc == 1){
 		global_file = STDOUT_FILENO;
 	
-		FILE *stream;
         char *line = NULL;
+        line = malloc(1024 * sizeof(char));
+        
         size_t len = 0;
         ssize_t nread;
         int count = 0;
-
-        stream = fopen(argv[count], "r");
-        if (stream == NULL) {
-            perror("fopen");
-            exit(EXIT_FAILURE);
-        }
         
-        while ((nread = getline(&line, &len, stream)) != -1 && count < argc) {
+        while ((nread = getline(&line, &len, stdin)) != -1 && count < argc) {
             fwrite(line, nread, 1, stdout);
             executeLine(line);
+            line = NULL;
+        	line = malloc(1024 * sizeof(char));
         }
         
         free(line);
-        fclose(stream);
         exit(EXIT_SUCCESS);
 	}
 }
@@ -97,7 +96,7 @@ void executeLine(char *line){
     dummy = malloc(100 * sizeof(char));
     
  
-    while (count <= commands.num_token) {  	
+    while (count < commands.num_token) {  	
     	int argCount = sscanf(cmd, "%s %s %s %s", command, arg1, arg2, dummy);
     	char* parameterMessage = "Error! Unsupported parameters for command: ";
     	char* unrecognizedMessage = "Error! Unrecognized command: ";
