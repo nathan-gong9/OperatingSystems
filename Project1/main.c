@@ -13,6 +13,7 @@ int global_file;
 void executeLine(char* line);
 
 int main(int argc, char * argv[]){
+	printf("RUNNING");
 	
 	//What to do if we're executing the pseudo-shell in file mode
 	if(strcmp(argv[1], "-f") == 0 && argc == 3){
@@ -52,22 +53,23 @@ int main(int argc, char * argv[]){
 	
 	//What to do if we execute the pseudo-shell in interactive mode
 	else if (argc == 1){
+		printf("INTERACTIVE MODE");
 		global_file = STDOUT_FILENO;
 	
         char *line = NULL;
-        line = malloc(1024 * sizeof(char));
         
         size_t len = 0;
         ssize_t nread;
-        int count = 0;
         
-        while ((nread = getline(&line, &len, stdin)) != -1 && count < argc) {
+        printf(">>>");
+        while ((nread = getline(&line, &len, stdin)) != -1) {
             fwrite(line, nread, 1, stdout);
             executeLine(line);
             line = NULL;
         	line = malloc(1024 * sizeof(char));
+        	printf(">>>");
+        	
         }
-        
         free(line);
         exit(EXIT_SUCCESS);
 	}
@@ -98,9 +100,9 @@ void executeLine(char *line){
  
     while (count < commands.num_token) {  	
     	int argCount = sscanf(cmd, "%s %s %s %s", command, arg1, arg2, dummy);
-    	char* parameterMessage = "Error! Unsupported parameters for command: ";
-    	char* unrecognizedMessage = "Error! Unrecognized command: ";
-    	char* argumentMessage = "Too many parameters: ";
+    	char parameterMessage[] = "Error! Unsupported parameters for command: ";
+    	char unrecognizedMessage[] = "Error! Unrecognized command: ";
+    	char argumentMessage[] = "Too many parameters: ";
     	strcat(parameterMessage, command);
     	strcat(unrecognizedMessage, command);
     	strcat(argumentMessage, command);
@@ -152,17 +154,15 @@ void executeLine(char *line){
         		displayFile(arg1);
         	else
         		write(global_file, parameterMessage, strlen(parameterMessage));
+        } else if(strcmp(command, "exit") == 0) {
+        	break;
     	} else {
         	write(global_file, unrecognizedMessage, strlen(unrecognizedMessage));
     	}
-        
-        //Exit if the exit command is entered
-        if(strcmp(command, "exit") == 0){
-        	break;
-        }
         	
         //iterate through command_list	
-        cmd = commands.command_list[count++];
+        count++;
+        cmd = commands.command_list[count];
         
         free(command);
         free(arg1);

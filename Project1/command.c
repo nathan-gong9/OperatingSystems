@@ -22,15 +22,18 @@ void listDir(){ /*for the ls command*/
 	write(global_file, "\n", strlen("\n"));
 	while((read_dir = readdir(dir)) != NULL){
 			write(global_file, read_dir->d_name, strlen(read_dir->d_name));
-			write(global_file, "\n", strlen("\n"));
+			write(global_file, " ", strlen(" "));
 	}
+	write(global_file, "\n", strlen("\n"));
 	closedir(dir);
 }
 
 void showCurrentDir(){ /*for the pwd command*/
 	char cwd[1024];
 	getcwd(cwd, sizeof(cwd));
+	write(global_file, "\n", strlen("\n"));
 	write(global_file, cwd, strlen(cwd));
+	write(global_file, "\n", strlen("\n"));
 }
 
 void makeDir(char *dirName){ /*for the mkdir command*/
@@ -45,7 +48,6 @@ void makeDir(char *dirName){ /*for the mkdir command*/
 	dir = opendir(cwd);
 	struct dirent *read_dir;
 	
-	write(global_file, "\n", strlen("\n"));
 	while((read_dir = readdir(dir)) != NULL){
 		if(strcmp(read_dir->d_name, dirName) == 0)
 			mkdirCheck = 1;
@@ -75,17 +77,16 @@ void changeDir(char *dirName){ /*for the cd command*/
 }
 
 void copyFile(char *sourcePath, char *destinationPath){ /*for the cp command*/ 
-    char cwd[1024];
     char source[1024];
-    snprintf(source, sizeof(source), "%s/%s", cwd, sourcePath);
+	getcwd(source, sizeof(source));
+
+	strcat(source, "/");
+	strcat(source, sourcePath);
     
     char destination[1024];
-
-    if (strchr(destinationPath, '.') == NULL) {
-        snprintf(destination, sizeof(destination), "%s/%s/%s", cwd, destinationPath, sourcePath);
-    } else {
-        snprintf(destination, sizeof(destination), "%s/%s", cwd, destinationPath);
-    }
+    getcwd(destination, sizeof(destination));
+    strcat(destination,"/");
+    strcat(destination, destinationPath);
     
     int source_fd = open(source, O_RDONLY);
     if (source_fd == -1) {
