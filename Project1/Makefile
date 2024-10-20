@@ -1,16 +1,32 @@
+# Define the compiler
 CC = gcc
-CFLAGS = -Wall -Wextra -g
-SRCS = $(wildcard *.c)
-OBJS = $(SRCS:.c=.o)
-EXEC = proj1
 
-$(EXEC): $(OBJS)
+# Define the flags
+CFLAGS = -Wall -g
+
+# Define the source files
+SRCS = main.c command.c string_parser.c
+
+# Define the object files
+OBJS = $(SRCS:.c=.o)
+
+# Define the executable
+TARGET = pseudo-shell
+
+# Default rule
+all: $(TARGET)
+
+# Rule to build the executable
+$(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
+# Rule to compile source files into object files
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $<
 
+# Clean up build files
 clean:
-	rm -f $(OBJS) $(EXEC)
+	rm -f $(OBJS) $(TARGET)
 
-.PHONY: clean
+# Phony targets
+.PHONY: all clean
