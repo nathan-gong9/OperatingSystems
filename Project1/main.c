@@ -20,18 +20,17 @@ int main(int argc, char * argv[]){
 		global_file = STDOUT_FILENO;
 	
         char *line = NULL;
+        line = malloc(1024 * sizeof(char));
         
         size_t len = 0;
         ssize_t nread;
         
-        printf(">>>");
+        printf(">>> ");
         while ((nread = getline(&line, &len, stdin)) != -1) {
             if(executeLine(line)){
             	break;
             }
-            line = NULL;
-        	line = malloc(1024 * sizeof(char));
-        	printf(">>>");
+        	printf(">>> ");
         	
         }
         free(line);
@@ -60,10 +59,12 @@ int main(int argc, char * argv[]){
             	exit(EXIT_FAILURE);
         	}
 		
-    		global_file = open("output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    		global_file = open("testoutput.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
         	while ((nread = getline(&line, &len, stream)) != -1) {
-            	executeLine(line);
+        		if(executeLine(line)){
+            		break;
+            	}
         	}
 
         	free(line);
@@ -81,11 +82,11 @@ bool executeLine(char *line){
 	//Go through the commands on the line by using the delimiters
     command_line commands = str_filler(line, ";");
     int count = 0;
-    char* cmd = commands.command_list[count];
-    count++;
     bool do_exit = false;
     
-    while (count < commands.num_token) {
+    while (count < commands.num_token - 1) {
+    	char cmd[256];
+    	strcpy(cmd, commands.command_list[count]);
     	char command[256];
     	char arg1[256];
     	char arg2[256];
@@ -173,10 +174,6 @@ bool executeLine(char *line){
         	
         //iterate through command_list	
         count++;
-        cmd = commands.command_list[count];
-        
-        
-        
     }
     
     free_command_line(&commands);

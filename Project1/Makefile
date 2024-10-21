@@ -23,10 +23,13 @@ $(TARGET): $(OBJS)
 # Rule to compile source files into object files
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
+	
+test:
+	./test_script.sh
 
 # Clean up build files
 clean:
 	rm -f $(OBJS) $(TARGET)
 
 # Phony targets
-.PHONY: all clean
+.PHONY: all clean test
