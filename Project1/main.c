@@ -58,7 +58,7 @@ int main(int argc, char * argv[]){
             	exit(EXIT_FAILURE);
         	}
 		
-    		global_file = open("testoutput.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    		global_file = open("output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
         	while ((nread = getline(&line, &len, stream)) != -1) {
         		if(executeLine(line)){
