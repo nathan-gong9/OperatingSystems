@@ -20,18 +20,18 @@ int main(int argc, char * argv[]){
 		global_file = STDOUT_FILENO;
 	
         char *line = NULL;
-        line = malloc(1024 * sizeof(char));
         
         size_t len = 0;
         ssize_t nread;
         
-        printf(">>> ");
+        write(global_file, ">>> ", strlen(">>> "));
         while ((nread = getline(&line, &len, stdin)) != -1) {
             if(executeLine(line)){
             	break;
             }
-        	printf(">>> ");
-        	
+        	write(global_file, ">>> ", strlen(">>> "));
+        	free(line);
+        	line = NULL;
         }
         free(line);
         exit(EXIT_SUCCESS);
@@ -44,7 +44,6 @@ int main(int argc, char * argv[]){
 			//Read the file line by line
 			FILE *stream;
         	char *line = NULL;
-        	line = malloc(1024 * sizeof(char));
         	size_t len = 0;
         	ssize_t nread;
 
@@ -65,6 +64,8 @@ int main(int argc, char * argv[]){
         		if(executeLine(line)){
             		break;
             	}
+            	free(line);
+        		line = NULL;
         	}
 
         	free(line);
