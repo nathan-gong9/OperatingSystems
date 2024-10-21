@@ -1,5 +1,6 @@
 #define _GNU_SOURCE
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -10,7 +11,7 @@
 
 int global_file;
 
-void executeLine(char* line);
+bool executeLine(char* line);
 
 int main(int argc, char * argv[]){
 	
@@ -25,8 +26,9 @@ int main(int argc, char * argv[]){
         
         printf(">>>");
         while ((nread = getline(&line, &len, stdin)) != -1) {
-            fwrite(line, nread, 1, stdout);
-            executeLine(line);
+            if(executeLine(line)){
+            	break;
+            }
             line = NULL;
         	line = malloc(1024 * sizeof(char));
         	printf(">>>");
@@ -58,13 +60,10 @@ int main(int argc, char * argv[]){
             	exit(EXIT_FAILURE);
         	}
 		
-    		global_file = open("testoutput.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    		global_file = open("output.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
         	while ((nread = getline(&line, &len, stream)) != -1) {
-            	fwrite(line, nread, 1, stdout);
             	executeLine(line);
-            	line = NULL;
-        		line = malloc(1024 * sizeof(char));
         	}
 
         	free(line);
@@ -78,113 +77,109 @@ int main(int argc, char * argv[]){
 	}
 }
 
-void executeLine(char *line){
+bool executeLine(char *line){
 	//Go through the commands on the line by using the delimiters
-    command_line commands = str_filler(line, " ; ");
+    command_line commands = str_filler(line, ";");
     int count = 0;
     char* cmd = commands.command_list[count];
-    commands.num_token = count_token(line, " : ");
-    if(commands.num_token == 0){
-    	commands  = str_filler(line, ";");
-    	cmd = commands.command_list[count];
-    }
     count++;
+    bool do_exit = false;
     
-    char *command = NULL;
-    char *arg1 = NULL;
-    char *arg2 = NULL; 
-    char *dummy = NULL;
-
-    command = malloc(100 * sizeof(char));
-    arg1 = malloc(100 * sizeof(char));
-    arg2 = malloc(100 * sizeof(char));
-    dummy = malloc(100 * sizeof(char));
-    
- 
-    while (count < commands.num_token) {  	
+    while (count < commands.num_token) {
+    	char command[256];
+    	char arg1[256];
+    	char arg2[256];
+    	char dummy[256];
+    	
     	int argCount = sscanf(cmd, "%s %s %s %s", command, arg1, arg2, dummy);
-    	char parameterMessage[] = "Error! Unsupported parameters for command: ";
-    	char unrecognizedMessage[] = "Error! Unrecognized command: ";
-    	char argumentMessage[] = "Too many parameters: ";
+    	
+    	char parameterMessage[256], unrecognizedMessage[256];
+    	strcpy(parameterMessage, "Error! Unsupported parameter for command: ");
+    	strcpy(unrecognizedMessage, "Error! Unrecognized command: ");
     	strcat(parameterMessage, command);
     	strcat(unrecognizedMessage, command);
-    	strcat(argumentMessage, command);
     	
-    	if(argCount > 3){
-    		write(global_file, argumentMessage, strlen(argumentMessage));
-    		break;
-    	}
     	
         //identify the command and what to do with it.
         if (strcmp(command, "ls") == 0) {
-        	if(arg1 != NULL){
-        		write(global_file, parameterMessage, strlen(parameterMessage));
-        	}
-        	else
+        	if(argCount == 1)
         		listDir();
+        	else{
+        		write(global_file, parameterMessage, strlen(parameterMessage));
+        		write(global_file, "\n", sizeof("\n"));
+        	}
     	} else if (strcmp(command, "pwd") == 0) {
-    		if(arg1 != NULL)
-    			write(global_file, parameterMessage, strlen(parameterMessage));
-    		else
-        		showCurrentDir();
+    		if(argCount == 1)
+    			showCurrentDir();
+    		else{
+        		write(global_file, parameterMessage, strlen(parameterMessage));
+        		write(global_file, "\n", sizeof("\n"));
+        	}
     	} else if (strcmp(command, "mkdir") == 0) {
-    		if(arg1 != NULL && arg2 == NULL)
+    		if(argCount == 2)
     			makeDir(arg1);
-    		else
-    			write(global_file, parameterMessage, strlen(parameterMessage));
+    		else{
+        		write(global_file, parameterMessage, strlen(parameterMessage));
+        		write(global_file, "\n", sizeof("\n"));
+        	}
     	} else if (strcmp(command, "cd") == 0) {
-    		if(arg1 != NULL && arg2 == NULL)
+    		if(argCount == 2)
     			changeDir(arg1);
-    		else
-    			write(global_file, parameterMessage, strlen(parameterMessage));
+    		else{
+        		write(global_file, parameterMessage, strlen(parameterMessage));
+        		write(global_file, "\n", sizeof("\n"));
+        	}
     	} else if (strcmp(command, "cp") == 0) {
-    		if(arg1 != NULL && arg2 != NULL)
+    		if(argCount == 3)
         		copyFile(arg1, arg2);
-        	else
+        	else{
         		write(global_file, parameterMessage, strlen(parameterMessage));
+        		write(global_file, "\n", sizeof("\n"));
+        	}
     	} else if (strcmp(command, "mv") == 0) {
-    		if(arg1 != NULL && arg2 != NULL)
+    		if(argCount == 3)
         		moveFile(arg1, arg2);
-        	else
+        	else{
         		write(global_file, parameterMessage, strlen(parameterMessage));
+        		write(global_file, "\n", sizeof("\n"));
+        	}
     	} else if (strcmp(command, "rm") == 0) {
-    		if(arg1 != NULL && arg2 == NULL)
+    		if(argCount == 2)
         		deleteFile(arg1);
-        	else
+        	else{
         		write(global_file, parameterMessage, strlen(parameterMessage));
-    	} else if (strcmp(command, "cat") == 0 && arg1 != NULL) {
-    		if(arg1 != NULL && arg2 == NULL)
+        		write(global_file, "\n", sizeof("\n"));
+        	}
+    	} else if (strcmp(command, "cat") == 0) {
+    		if(argCount == 2)
         		displayFile(arg1);
-        	else
+        	else{
         		write(global_file, parameterMessage, strlen(parameterMessage));
+        		write(global_file, "\n", sizeof("\n"));
+        	}
         } else if(strcmp(command, "exit") == 0) {
-        	break;
+        	if(argCount == 1){
+        		do_exit = true;
+        		break;
+        	}
+        	else{
+        		write(global_file, parameterMessage, strlen(parameterMessage));
+        		write(global_file, "\n", sizeof("\n"));
+        	}
     	} else {
         	write(global_file, unrecognizedMessage, strlen(unrecognizedMessage));
+        	write(global_file, "\n", sizeof("\n"));
     	}
         	
         //iterate through command_list	
         count++;
         cmd = commands.command_list[count];
         
-        free(command);
-        free(arg1);
-        free(arg2);
-        
-        command = NULL;
-        arg1 = NULL;
-        arg2 = NULL;
-        
-        command = malloc(100 * sizeof(char));
-    	arg1 = malloc(100 * sizeof(char));
-    	arg2 = malloc(100 * sizeof(char));
         
         
     }
     
     free_command_line(&commands);
-    free(command);
-    free(arg1);
-    free(arg2);
+    return do_exit;
 }
 

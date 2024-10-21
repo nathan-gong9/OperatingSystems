@@ -13,13 +13,11 @@ extern int global_file;
 void listDir(){ /*for the ls command*/
 	char cwd[1024];
 	getcwd(cwd, sizeof(cwd));
-	write(global_file, cwd, strlen(cwd));
 	
 	DIR *dir;
 	dir = opendir(cwd);
 	struct dirent *read_dir;
 	
-	write(global_file, "\n", strlen("\n"));
 	while((read_dir = readdir(dir)) != NULL){
 			write(global_file, read_dir->d_name, strlen(read_dir->d_name));
 			write(global_file, " ", strlen(" "));
@@ -31,7 +29,6 @@ void listDir(){ /*for the ls command*/
 void showCurrentDir(){ /*for the pwd command*/
 	char cwd[1024];
 	getcwd(cwd, sizeof(cwd));
-	write(global_file, "\n", strlen("\n"));
 	write(global_file, cwd, strlen(cwd));
 	write(global_file, "\n", strlen("\n"));
 }
@@ -39,10 +36,13 @@ void showCurrentDir(){ /*for the pwd command*/
 void makeDir(char *dirName){ /*for the mkdir command*/
 	char cwd[1024];
 	getcwd(cwd, sizeof(cwd));
+	
+	char newDir[1024];
+	getcwd(newDir, sizeof(newDir));
 	int mkdirCheck = 0;
 
-	strcat(cwd, "/");
-	strcat(cwd, dirName);
+	strcat(newDir, "/");
+	strcat(newDir, dirName);
 	
 	DIR *dir;
 	dir = opendir(cwd);
@@ -54,13 +54,9 @@ void makeDir(char *dirName){ /*for the mkdir command*/
 	}
 	closedir(dir);
 	if(mkdirCheck == 0){
-		write(global_file, "\n", sizeof("\n"));
-		write(global_file, cwd, strlen(cwd));
-		write(global_file, "\n", sizeof("\n"));
-		mkdir(cwd, 0755);
+		mkdir(newDir, 0755);
 	}
 	else{
-		write(global_file, "\n", sizeof("\n"));
 		write(global_file, "Directory already exists!", strlen("Directory already exists!"));
 		write(global_file, "\n", sizeof("\n"));
 	}
@@ -171,9 +167,18 @@ void deleteFile(char *filename){ /*for the rm command*/
 	getcwd(cwd, sizeof(cwd));
 
 	strcat(cwd, "/");
-	printf("cwd: %s\n", cwd);
 	strcat(cwd, filename);
-	unlink(cwd);
+	
+	struct stat fileStat;
+	if(stat(cwd, &fileStat) == 0)
+		remove(cwd);
+	else{
+		char error[256];
+		strcpy(error, "rm: cannot remove: '");
+		strcat(error, filename);
+		strcat(error, "': No such file or directory\n");
+		write(global_file, error, strlen(error));
+	}
 }
 
 void displayFile(char *filename){ /*for the cat command*/
@@ -195,7 +200,6 @@ void displayFile(char *filename){ /*for the cat command*/
 			
 			if(strcmp(read_dir->d_name, filename) == 0){
 				int file_id = open(read_dir->d_name, O_RDONLY);
-				write(global_file, "\n", sizeof("\n"));
 				do {
 					bytes = read(file_id, buffer, sizeof(buffer));
 					write(global_file, buffer, bytes);
