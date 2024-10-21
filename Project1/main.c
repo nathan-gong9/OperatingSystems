@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <ctype.h>
 #include <sys/types.h>
 #include "string_parser.h"
 #include "command.h"
@@ -85,7 +86,7 @@ bool executeLine(char *line){
     int count = 0;
     bool do_exit = false;
     
-    while (count < commands.num_token - 1) {
+    while (count < commands.num_token) {
     	char cmd[256];
     	strcpy(cmd, commands.command_list[count]);
     	char command[256];
@@ -94,6 +95,11 @@ bool executeLine(char *line){
     	char dummy[256];
     	
     	int argCount = sscanf(cmd, "%s %s %s %s", command, arg1, arg2, dummy);
+    	
+    	if(argCount <= 0){
+    		count++;
+    		continue;
+    	}
     	
     	char parameterMessage[256], unrecognizedMessage[256];
     	strcpy(parameterMessage, "Error! Unsupported parameter for command: ");
@@ -180,4 +186,5 @@ bool executeLine(char *line){
     free_command_line(&commands);
     return do_exit;
 }
+
 

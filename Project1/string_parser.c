@@ -26,7 +26,7 @@ int count_token (char* buf, const char* delim)
 	*	#3. return the number of token (note not number of delimeter)
 	*/
 	char *token, *saveptr, *str1, *placeholder;
-	int counter = 1;
+	int counter = 0;
 	for(placeholder = str1 = strdup(buf);; str1 = NULL){
 		token = strtok_r(str1, delim, &saveptr);
 		if(token == NULL)
@@ -68,7 +68,6 @@ command_line str_filler (char* buf, const char* delim)
 	}
 	
 	free(placeholder);
-	cmd.command_list[cmd.num_token - 1] = NULL;
 	
 	return cmd;
 	
