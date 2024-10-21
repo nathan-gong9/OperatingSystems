@@ -214,7 +214,7 @@ void deleteFile(char *filename){ /*for the rm command*/
 			write(global_file, error, strlen(error));
 		}
 		else
-			unlink(cwd);
+			remove(cwd);
 	}
 	else{
 		char error[256];
