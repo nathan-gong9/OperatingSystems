@@ -7,8 +7,6 @@
 #include <fcntl.h>
 #include <ctype.h>
 #include <sys/types.h>
-#include "string_parser.h"
-#include "command.h"
 
 int main(int argc, char * argv[]){
 	//Read program workload from specified input file
