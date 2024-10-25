@@ -80,12 +80,13 @@ int main(int argc, char * argv[]){
 				}
 				
 				else if (processes[line_number] == 0){
-				
+					printf("Started fork\n");
 					sigset_t sigset;
 					sigemptyset(&sigset);
 					sigaddset(&sigset, SIGUSR1);
 					sigprocmask(SIG_BLOCK, &sigset, NULL);
 					int sig;
+					printf("About to wait:\n");
 					int wait_signal = sigwait(&sigset, &sig);
 					
 					if(wait_signal != 0){
@@ -115,15 +116,21 @@ int main(int argc, char * argv[]){
         	fclose(workload);
         	free(processes);
         	
+        	printf("Sending out SIGUSR1\n");
+        	
         	for (int i = 0; i < num_processes; i++) {
 				kill(processes[i], SIGUSR1);
 			}
-		
+			
+			printf("Sending out SIGSTOP\n");
+			
 			sleep(1);
 			for (int i = 0; i < num_processes; i++) {
 				kill(processes[i], SIGSTOP);
 			}
 		
+			printf("Sending out SIGCONT\n");
+			
 			sleep(1);
 			for (int i = 0; i < num_processes; i++) {
 				kill(processes[i], SIGCONT);
