@@ -60,7 +60,8 @@ int main(int argc, char * argv[]){
 				
 				int iter = 0;
 				while(args[iter] != NULL){
-					printf("Args[%d]: %s", iter, args[iter]);
+					printf("Args[%d]: %s\n", iter, args[iter]);
+					iter++;
 				}
 				
 				commands[line_number] = fork();
