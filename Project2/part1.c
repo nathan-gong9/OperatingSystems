@@ -74,16 +74,15 @@ int main(int argc, char * argv[]){
 				else if (commands[line_number] == 0){
 				
 					int exec = execvp(args[0], args);
-					printf("Execvp return: %d\n", exec);
 				
 					if (exec == -1) {
                 		char error[] = "Execvp failed\n";
 						write(STDOUT_FILENO, error, sizeof(error));
 						exit(EXIT_FAILURE);
             		}
-            		else{
-            			printf("Execvp success\n");
-            		}
+					char success[] = "Execvp success\n";
+					write(STDOUT_FILENO, success, sizeof(success));
+					exit(EXIT_FAILURE);
 					exit(-1);
 				}
 				
@@ -98,6 +97,8 @@ int main(int argc, char * argv[]){
         	exit(EXIT_SUCCESS);
 		}
 		else{
+			char error[] = "Wrong amount of parameters\n";
+			write(STDOUT_FILENO, error, sizeof(error));
 			exit(EXIT_FAILURE);
 		}
 	}
