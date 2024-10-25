@@ -38,22 +38,23 @@ int main(int argc, char * argv[]){
         	}
 		
     		int max_args = 10;
-    		int num_lines = 0;
+    		int num_processes = 0;
     		
     		while ((nread = getline(&line, &len, workload)) != -1) {
-        		num_lines++;
+        		num_processes++;
         	}
         	
         	rewind(workload);
         	
         	//This is the start of actually executing/reading the commands
         	
+        	struct sigaction sa;
         	sa.sa_handler = sigusr1_handler;
 			sigemptyset(&sa.sa_mask);
 			sa.sa_flags = 0;
 			sigaction(SIGUSR1, &sa, NULL);
         	
-        	pid_t *commands = (pid_t*) malloc(num_lines * sizeof(pid_t));
+        	pid_t *processes = (pid_t*) malloc(num_processes * sizeof(pid_t));
         	int line_number = 0;
         	
         	while ((nread = getline(&line, &len, workload)) != -1) {
@@ -70,24 +71,22 @@ int main(int argc, char * argv[]){
 				
 				args[count] = NULL;
 				
-				commands[line_number] = fork();
+				processes[line_number] = fork();
 				
-				if(commands[line_number] < 0){
+				if(processes[line_number] < 0){
 					char error[] = "Fork failed\n";
 					write(STDOUT_FILENO, error, sizeof(error));
 					exit(EXIT_FAILURE);
 				}
 				
-				else if (commands[line_number] == 0){
+				else if (processes[line_number] == 0){
 				
 					sigset_t sigset;
 					sigemptyset(&sigset);
 					sigaddset(&sigset, SIGUSR1);
 					sigprocmask(SIG_BLOCK, &sigset, NULL);
 					int sig;
-					sigwait(&sigset, &sig);
-					
-					int wait_signal = sigwait();
+					int wait_signal = sigwait(&sigset, &sig);
 					
 					if(wait_signal != 0){
 						char error[] = "Sigwait failed\n";
@@ -114,9 +113,25 @@ int main(int argc, char * argv[]){
 
         	free(line);
         	fclose(workload);
-        	free(commands);
+        	free(processes);
+        	
+        	for (int i = 0; i < num_processes; i++) {
+				kill(processes[i], SIGUSR1);
+			}
+		
+			sleep(1);
+			for (int i = 0; i < num_processes; i++) {
+				kill(processes[i], SIGSTOP);
+			}
+		
+			sleep(1);
+			for (int i = 0; i < num_processes; i++) {
+				kill(processes[i], SIGCONT);
+			}
+        	
         	exit(EXIT_SUCCESS);
 		}
+		
 		else{
 			char error[] = "Wrong amount of parameters\n";
 			write(STDOUT_FILENO, error, sizeof(error));

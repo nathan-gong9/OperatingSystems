@@ -1,0 +1,8 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     part2
+relocations:
+  - { offset: 0x26, size: 0x8, addend: 0x0, symName: _sigusr1_handler, symObjAddr: 0x0, symBinAddr: 0x10000382C, symSize: 0x10 }
+  - { offset: 0x6F, size: 0x8, addend: 0x0, symName: _sigusr1_handler, symObjAddr: 0x0, symBinAddr: 0x10000382C, symSize: 0x10 }
+  - { offset: 0xAB, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x10, symBinAddr: 0x10000383C, symSize: 0x5EC }
+...
