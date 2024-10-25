@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <ctype.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 
 int main(int argc, char * argv[]){
 	//Read program workload from specified input file
@@ -70,6 +71,10 @@ int main(int argc, char * argv[]){
                 		char error[] = "Execvp failed\n";
 						write(STDOUT_FILENO, error, sizeof(error));
 						exit(EXIT_FAILURE);
+            		}
+            		else{
+            			char success[] = "Execvp successful\n";
+						write(STDOUT_FILENO, success, sizeof(success));
             		}
 					exit(-1);
 				}
