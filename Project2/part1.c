@@ -42,7 +42,6 @@ int main(int argc, char * argv[]){
         	
         	pid_t *commands = (pid_t*) malloc(num_lines * sizeof(pid_t));
         	int line_number = 0;
-        	printf("Number of lines: %d\n", num_lines);
         	
         	while ((nread = getline(&line, &len, workload)) != -1) {
         		char *args[max_args];
@@ -52,7 +51,7 @@ int main(int argc, char * argv[]){
 				// Tokenize the line into arguments
 				while (token != NULL && count < max_args) {
 					args[count] = token;
-					token = strtok(NULL, " ");
+					token = strtok(NULL, " \n");
 					count++;
 				}
 				
@@ -75,6 +74,7 @@ int main(int argc, char * argv[]){
 				else if (commands[line_number] == 0){
 				
 					int exec = execvp(args[0], args);
+					printf("Execvp return: %d\n", exec);
 				
 					if (exec == -1) {
                 		char error[] = "Execvp failed\n";
@@ -82,8 +82,7 @@ int main(int argc, char * argv[]){
 						exit(EXIT_FAILURE);
             		}
             		else{
-            			char success[] = "Execvp successful\n";
-						write(STDOUT_FILENO, success, sizeof(success));
+            			printf("Execvp success\n");
             		}
 					exit(-1);
 				}
