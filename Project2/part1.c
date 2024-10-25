@@ -57,12 +57,6 @@ int main(int argc, char * argv[]){
 				
 				args[count] = NULL;
 				
-				int iter = 0;
-				while(args[iter] != NULL){
-					printf("Args[%d]: %s\n", iter, args[iter]);
-					iter++;
-				}
-				
 				commands[line_number] = fork();
 				
 				if(commands[line_number] < 0){
