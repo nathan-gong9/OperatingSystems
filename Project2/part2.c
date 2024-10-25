@@ -89,11 +89,14 @@ int main(int argc, char * argv[]){
 					printf("About to wait:\n");
 					int wait_signal = sigwait(&sigset, &sig);
 					
+					printf("Just after waiting for process %d", line_number);
 					if(wait_signal != 0){
 						char error[] = "Sigwait failed\n";
 						write(STDOUT_FILENO, error, sizeof(error));
 						exit(EXIT_FAILURE);
 					}
+
+					printf("About to exec process: %d\n", line_number);
 					int exec = execvp(args[0], args);
 				
 					if (exec == -1) {
@@ -109,12 +112,9 @@ int main(int argc, char * argv[]){
 				
 				line_number++;
         	}
-        	
-        	while(wait(NULL) > 0);
 
         	free(line);
         	fclose(workload);
-        	free(processes);
         	
         	printf("Sending out SIGUSR1\n");
         	
@@ -122,20 +122,24 @@ int main(int argc, char * argv[]){
 				kill(processes[i], SIGUSR1);
 			}
 			
-			printf("Sending out SIGSTOP\n");
+		printf("Sending out SIGSTOP\n");
 			
-			sleep(1);
-			for (int i = 0; i < num_processes; i++) {
-				kill(processes[i], SIGSTOP);
-			}
+		sleep(1);
+		for (int i = 0; i < num_processes; i++) {
+			kill(processes[i], SIGSTOP);
+		}
 		
-			printf("Sending out SIGCONT\n");
+		printf("Sending out SIGCONT\n");
 			
-			sleep(1);
-			for (int i = 0; i < num_processes; i++) {
-				kill(processes[i], SIGCONT);
-			}
+		sleep(1);
+		for (int i = 0; i < num_processes; i++) {
+			printf("Continuing for: %d\n", i);
+			kill(processes[i], SIGCONT);
+		}
         	
+		while(wait(NULL) > 0);
+
+		free(processes);
         	exit(EXIT_SUCCESS);
 		}
 		
