@@ -42,6 +42,7 @@ int main(int argc, char * argv[]){
         	
         	pid_t *commands = (pid_t*) malloc(num_lines * sizeof(pid_t));
         	int line_number = 0;
+        	printf("Number of lines: %d\n", num_lines);
         	
         	while ((nread = getline(&line, &len, workload)) != -1) {
         		char *args[max_args];
@@ -57,6 +58,11 @@ int main(int argc, char * argv[]){
 				
 				args[count] = NULL;
 				
+				int iter = 0;
+				while(args[iter] != NULL){
+					printf("Args[%d]: %s", iter, args[iter]);
+				}
+				
 				commands[line_number] = fork();
 				
 				if(commands[line_number] < 0){
@@ -67,7 +73,9 @@ int main(int argc, char * argv[]){
 				
 				else if (commands[line_number] == 0){
 				
-					if (execvp(args[0], args) == -1) {
+					int exec = execvp(args[0], args);
+				
+					if (exec == -1) {
                 		char error[] = "Execvp failed\n";
 						write(STDOUT_FILENO, error, sizeof(error));
 						exit(EXIT_FAILURE);
