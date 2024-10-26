@@ -71,15 +71,17 @@ int main(int argc, char * argv[]){
 				
 				args[count] = NULL;
 				
+				pid_t pid = fork()
+				
 				processes[line_number] = fork();
 				
-				if(processes[line_number] < 0){
+				if(ppid < 0){
 					char error[] = "Fork failed\n";
 					write(STDOUT_FILENO, error, sizeof(error));
 					exit(EXIT_FAILURE);
 				}
 				
-				else if (processes[line_number] == 0){
+				else if (pid == 0){
 					printf("Started fork\n");
 					sigset_t sigset;
 					sigemptyset(&sigset);
@@ -102,8 +104,10 @@ int main(int argc, char * argv[]){
 					exit(EXIT_FAILURE);
 					exit(-1);
 				}
-				
-				line_number++;
+				else{
+					processes[line_number] = pid;
+					line_number++;
+				}
         	}
 
         	free(line);
