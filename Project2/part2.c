@@ -59,9 +59,9 @@ int main(int argc, char * argv[]){
 				}
 				
 				args[count] = NULL;
-				
 				pid_t pid = fork();
 				
+
 				if(pid < 0){
 					char error[] = "Fork failed\n";
 					write(STDOUT_FILENO, error, sizeof(error));
@@ -69,12 +69,9 @@ int main(int argc, char * argv[]){
 				}
 				
 				else if (pid == 0){
-					printf("Started fork\n");
 					int sig;
-					printf("About to wait:\n");
 					sigwait(&sigset, &sig);
 
-					printf("About to exec process: %d\n", line_number);
 					int exec = execvp(args[0], args);
 				
 					exit(-1);
@@ -85,25 +82,21 @@ int main(int argc, char * argv[]){
 				}
         	}
         	
-        	printf("Sending out SIGUSR1\n");
         	
         	for (int i = 0; i < num_processes; i++) {
 				kill(processes[i], SIGUSR1);
 			}
 			
 			
-			printf("Sending out SIGSTOP\n");
 				
 			sleep(1);
 			for (int i = 0; i < num_processes; i++) {
 				kill(processes[i], SIGSTOP);
 			}
 			
-			printf("Sending out SIGCONT\n");
 				
 			sleep(1);
 			for (int i = 0; i < num_processes; i++) {
-				printf("Continuing for: %d\n", i);
 				kill(processes[i], SIGCONT);
 			}
 			
