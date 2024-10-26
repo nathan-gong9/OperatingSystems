@@ -87,14 +87,7 @@ int main(int argc, char * argv[]){
 					sigprocmask(SIG_BLOCK, &sigset, NULL);
 					int sig;
 					printf("About to wait:\n");
-					int wait_signal = sigwait(&sigset, &sig);
-					
-					printf("Just after waiting for process %d", line_number);
-					if(wait_signal != 0){
-						char error[] = "Sigwait failed\n";
-						write(STDOUT_FILENO, error, sizeof(error));
-						exit(EXIT_FAILURE);
-					}
+					sigwait(&sigset, &sig);
 
 					printf("About to exec process: %d\n", line_number);
 					int exec = execvp(args[0], args);
@@ -122,31 +115,38 @@ int main(int argc, char * argv[]){
 				kill(processes[i], SIGUSR1);
 			}
 			
-		printf("Sending out SIGSTOP\n");
+			/***
+			printf("Sending out SIGSTOP\n");
+				
+			sleep(1);
+			for (int i = 0; i < num_processes; i++) {
+				kill(processes[i], SIGSTOP);
+			}
 			
-		sleep(1);
-		for (int i = 0; i < num_processes; i++) {
-			kill(processes[i], SIGSTOP);
-		}
-		
-		printf("Sending out SIGCONT\n");
-			
-		sleep(1);
-		for (int i = 0; i < num_processes; i++) {
-			printf("Continuing for: %d\n", i);
-			kill(processes[i], SIGCONT);
-		}
-        	
-		while(wait(NULL) > 0);
-
-		free(processes);
-        	exit(EXIT_SUCCESS);
+			printf("Sending out SIGCONT\n");
+				
+			sleep(1);
+			for (int i = 0; i < num_processes; i++) {
+				printf("Continuing for: %d\n", i);
+				kill(processes[i], SIGCONT);
+			}
+			***/
+				
+			while(wait(NULL) > 0);
+	
+			free(processes);
+				exit(EXIT_SUCCESS);
 		}
 		
 		else{
-			char error[] = "Wrong amount of parameters\n";
+			char error[] = "Not in file mode\n";
 			write(STDOUT_FILENO, error, sizeof(error));
 			exit(EXIT_FAILURE);
 		}
+	}
+	else{
+		char error[] = "Wrong amount of parameters\n";
+		write(STDOUT_FILENO, error, sizeof(error));
+		exit(EXIT_FAILURE);
 	}
 }
