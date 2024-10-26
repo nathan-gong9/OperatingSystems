@@ -71,11 +71,11 @@ int main(int argc, char * argv[]){
 				
 				args[count] = NULL;
 				
-				pid_t pid = fork()
+				pid_t pid = fork();
 				
 				processes[line_number] = fork();
 				
-				if(ppid < 0){
+				if(pid < 0){
 					char error[] = "Fork failed\n";
 					write(STDOUT_FILENO, error, sizeof(error));
 					exit(EXIT_FAILURE);
