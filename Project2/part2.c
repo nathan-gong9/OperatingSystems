@@ -99,9 +99,6 @@ int main(int argc, char * argv[]){
 						write(STDOUT_FILENO, error, sizeof(error));
 						exit(EXIT_FAILURE);
             		}
-					char success[] = "Execvp success\n";
-					write(STDOUT_FILENO, success, sizeof(success));
-					exit(EXIT_FAILURE);
 					exit(-1);
 				}
 				else{
@@ -119,7 +116,7 @@ int main(int argc, char * argv[]){
 				kill(processes[i], SIGUSR1);
 			}
 			
-			/***
+			
 			printf("Sending out SIGSTOP\n");
 				
 			sleep(1);
@@ -134,7 +131,7 @@ int main(int argc, char * argv[]){
 				printf("Continuing for: %d\n", i);
 				kill(processes[i], SIGCONT);
 			}
-			***/
+			
 				
 			while(wait(NULL) > 0);
 	
