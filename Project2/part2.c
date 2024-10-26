@@ -84,9 +84,6 @@ int main(int argc, char * argv[]){
 					line_number++;
 				}
         	}
-
-        	free(line);
-        	fclose(workload);
         	
         	printf("Sending out SIGUSR1\n");
         	
@@ -110,11 +107,11 @@ int main(int argc, char * argv[]){
 				kill(processes[i], SIGCONT);
 			}
 			
-			
-				
 			while(wait(NULL) > 0);
 	
 			free(processes);
+			free(line);
+        	fclose(workload);
 			exit(EXIT_SUCCESS);
 		}
 		
