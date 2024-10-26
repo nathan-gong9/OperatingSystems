@@ -10,11 +10,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-
-void sigusr1_handler(int sig) {
-
-}
-
 int main(int argc, char * argv[]){
 	//Read program workload from specified input file
 	if (argc == 3){
@@ -25,12 +20,7 @@ int main(int argc, char * argv[]){
         	char *line = NULL;
         	size_t len = 0;
         	ssize_t nread;
-
-        	if (argc != 3) {
-            	fprintf(stderr, "Usage: %s <file>\n", argv[0]);
-            	exit(EXIT_FAILURE);
-        	}
-
+        	
         	workload = fopen(argv[2], "r");
         	if (workload == NULL) {
             	perror("fopen");
@@ -47,19 +37,18 @@ int main(int argc, char * argv[]){
         	rewind(workload);
         	
         	//This is the start of actually executing/reading the commands
-        	
-        	struct sigaction sa;
-        	sa.sa_handler = sigusr1_handler;
-			sigemptyset(&sa.sa_mask);
-			sa.sa_flags = 0;
-			sigaction(SIGUSR1, &sa, NULL);
+			
+			sigset_t sigset;
+			sigemptyset(&sigset);
+			sigaddset(&sigset, SIGUSR1);
+			sigprocmask(SIG_BLOCK, &sigset, NULL);
         	
         	pid_t *processes = (pid_t*) malloc(num_processes * sizeof(pid_t));
         	int line_number = 0;
         	
         	while ((nread = getline(&line, &len, workload)) != -1) {
         		char *args[max_args];
-        		char *token = strtok(line, " ");
+        		char *token = strtok(line, " \n");
 				int count = 0;
 		
 				// Tokenize the line into arguments
@@ -73,8 +62,6 @@ int main(int argc, char * argv[]){
 				
 				pid_t pid = fork();
 				
-				processes[line_number] = fork();
-				
 				if(pid < 0){
 					char error[] = "Fork failed\n";
 					write(STDOUT_FILENO, error, sizeof(error));
@@ -83,10 +70,6 @@ int main(int argc, char * argv[]){
 				
 				else if (pid == 0){
 					printf("Started fork\n");
-					sigset_t sigset;
-					sigemptyset(&sigset);
-					sigaddset(&sigset, SIGUSR1);
-					sigprocmask(SIG_BLOCK, &sigset, NULL);
 					int sig;
 					printf("About to wait:\n");
 					sigwait(&sigset, &sig);
@@ -94,11 +77,6 @@ int main(int argc, char * argv[]){
 					printf("About to exec process: %d\n", line_number);
 					int exec = execvp(args[0], args);
 				
-					if (exec == -1) {
-                		char error[] = "Execvp failed\n";
-						write(STDOUT_FILENO, error, sizeof(error));
-						exit(EXIT_FAILURE);
-            		}
 					exit(-1);
 				}
 				else{
@@ -132,11 +110,12 @@ int main(int argc, char * argv[]){
 				kill(processes[i], SIGCONT);
 			}
 			
+			
 				
 			while(wait(NULL) > 0);
 	
 			free(processes);
-				exit(EXIT_SUCCESS);
+			exit(EXIT_SUCCESS);
 		}
 		
 		else{
