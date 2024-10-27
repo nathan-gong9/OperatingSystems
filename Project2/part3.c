@@ -23,7 +23,7 @@ void alarm_handler(int sig) {
     current_process = (current_process + 1) % num_processes;
 
     kill(processes[current_process], SIGCONT);
-    printf("Process %d resumed\n", processes[current_process]);
+    printf("Process %d continued\n", processes[current_process]);
 
     alarm(TIME_SLICE);
 }
