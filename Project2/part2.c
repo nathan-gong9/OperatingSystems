@@ -86,20 +86,26 @@ int main(int argc, char * argv[]){
         	
         	
         	for (int i = 0; i < num_processes; i++) {
-				kill(processes[i], SIGUSR1);
+				if(kill(processes[i], SIGUSR1) == -1){
+					perror("SENDING SIGUSR1");
+				}
 			}
 			
 			
 				
 			sleep(1);
 			for (int i = 0; i < num_processes; i++) {
-				kill(processes[i], SIGSTOP);
+				if(kill(processes[i], SIGSTOP) == -1){
+					perror("Sending SIGSTOP");
+				}
 			}
 			
 				
 			sleep(1);
 			for (int i = 0; i < num_processes; i++) {
-				kill(processes[i], SIGCONT);
+				if(kill(processes[i], SIGCONT) == -1){
+					perror("Sending SIGCONT");
+				}
 			}
 			
 			while(wait(NULL) > 0);
