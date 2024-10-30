@@ -64,7 +64,6 @@ void print_process_info(pid_t pid) {
 
 void update_process_info(pid_t *processes, int num_processes) {
     printf("PID   | CPU Time (s) | Memory (KB) | I/O Read (Bytes) | I/O Write (Bytes)\n");
-    printf("--------------------------------------------------------------------------\n");
 
     for (int i = 0; i < num_processes; i++) {
         print_process_info(processes[i]);
