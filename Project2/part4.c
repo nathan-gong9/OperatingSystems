@@ -21,21 +21,32 @@ void print_process_info(pid_t pid) {
     char buffer[256];
     int fd;
 
-    // Read memory usage (VSZ) from the stat file
+    snprintf(path, sizeof(path), "/proc/%d/status", pid);
+    fd = open(path, O_RDONLY);
+    if (fd < 0) {
+        perror("open status");
+        return;
+    }
+    int mem_usage = 0;
+    while (read(fd, buffer, sizeof(buffer) - 1) > 0) {
+        if (sscanf(buffer, "VmRSS: %d kB", &mem_usage) == 1) {
+            break;
+        }
+    }
+    close(fd);
+
     snprintf(path, sizeof(path), "/proc/%d/stat", pid);
     FILE *file = fopen(path, "r");
     if (file == NULL) {
         perror("fopen stat");
         return;
     }
-    
-    long utime = 0, stime = 0, vsize = 0;
-    for (int i = 0; i < 22; i++) fscanf(file, "%*s"); // Skip to the 23rd column (vsize)
-    fscanf(file, "%ld %ld %ld", &vsize, &utime, &stime); // Read VSZ, utime, stime
+    long utime = 0, stime = 0;
+    for (int i = 0; i < 14; i++) fscanf(file, "%*s");
+    fscanf(file, "%ld %ld", &utime, &stime);
     fclose(file);
     double cpu_time = (utime + stime) / (double)sysconf(_SC_CLK_TCK); 
 
-    // Read I/O stats from the /proc/[PID]/io file
     snprintf(path, sizeof(path), "/proc/%d/io", pid);
     file = fopen(path, "r");
     long rchar = 0, wchar = 0;
@@ -48,11 +59,11 @@ void print_process_info(pid_t pid) {
         fclose(file);
     }
     
-    printf("%-5d | %-10.2f | %-10ld | %-15ld | %-15ld\n", pid, cpu_time, vsize, rchar, wchar);
+    printf("%-5d | %-10.2f | %-10d | %-15ld | %-15ld\n", pid, cpu_time, mem_usage, rchar, wchar);
 }
 
 void update_process_info(pid_t *processes, int num_processes) {
-    printf("PID   | CPU Time (s) | Virtual Memory (Bytes) | I/O Read (Chars) | I/O Write (Chars)\n");
+    printf("PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)\n");
 
     for (int i = 0; i < num_processes; i++) {
         print_process_info(processes[i]);
@@ -81,7 +92,7 @@ void alarm_handler(int sig) {
 int main(int argc, char * argv[]){
     // Read program workload from specified input file
     if (argc == 3){
-        if (strcmp(argv[1], "-f") == 0){
+        if(strcmp(argv[1], "-f") == 0){
             // Read the file line by line
             FILE *workload;
             char *line = NULL;
