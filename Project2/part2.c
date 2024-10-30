@@ -98,6 +98,9 @@ int main(int argc, char * argv[]){
 				if(kill(processes[i], SIGSTOP) == -1){
 					perror("Sending SIGSTOP");
 				}
+				else{
+					printf("Process %d stopped\n", processes[i]);
+				}
 			}
 			
 				
@@ -105,6 +108,9 @@ int main(int argc, char * argv[]){
 			for (int i = 0; i < num_processes; i++) {
 				if(kill(processes[i], SIGCONT) == -1){
 					perror("Sending SIGCONT");
+				}
+				else{
+					printf("Process %d continued\n", processes[i]);
 				}
 			}
 			
