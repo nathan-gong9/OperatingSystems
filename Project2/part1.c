@@ -60,8 +60,7 @@ int main(int argc, char * argv[]){
 				commands[line_number] = fork();
 				
 				if(commands[line_number] < 0){
-					char error[] = "Fork failed\n";
-					write(STDOUT_FILENO, error, sizeof(error));
+					perror("Fork failed");
 					exit(EXIT_FAILURE);
 				}
 				
@@ -70,8 +69,7 @@ int main(int argc, char * argv[]){
 					int exec = execvp(args[0], args);
 				
 					if (exec == -1) {
-                		char error[] = "Execvp failed\n";
-						write(STDOUT_FILENO, error, sizeof(error));
+                		perror("Command exec failed");
 						exit(EXIT_FAILURE);
             		}
 					char success[] = "Execvp success\n";
@@ -91,8 +89,7 @@ int main(int argc, char * argv[]){
         	exit(EXIT_SUCCESS);
 		}
 		else{
-			char error[] = "Wrong amount of parameters\n";
-			write(STDOUT_FILENO, error, sizeof(error));
+			perror("Not in file mode");
 			exit(EXIT_FAILURE);
 		}
 	}

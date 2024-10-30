@@ -17,12 +17,16 @@ int num_processes;
 int current_process = 0;  
 
 void alarm_handler(int sig) {
-    kill(processes[current_process], SIGSTOP);
+    if(kill(processes[current_process], SIGSTOP) == -1){
+    	perror("Sending SIGSTOP in alarmhandler");
+    }
     printf("Process %d stopped\n", processes[current_process]);
 
     current_process = (current_process + 1) % num_processes;
 
-    kill(processes[current_process], SIGCONT);
+    if(kill(processes[current_process], SIGCONT) == -1){
+    	perror("Sending SIGCONT in alarmhandler");
+    }
     printf("Process %d continued\n", processes[current_process]);
 
     alarm(TIME_SLICE);
@@ -87,8 +91,7 @@ int main(int argc, char * argv[]){
 				
 
 				if(pid < 0){
-					char error[] = "Fork failed\n";
-					write(STDOUT_FILENO, error, sizeof(error));
+					perror("Fork failed");
 					exit(EXIT_FAILURE);
 				}
 				
@@ -98,7 +101,10 @@ int main(int argc, char * argv[]){
 
 					int exec = execvp(args[0], args);
 				
-					exit(-1);
+					if(exec == -1){
+						perror("Command exec failed");
+						exit(-1);
+					}
 				}
 				else{
 					processes[line_number] = pid;
@@ -108,16 +114,22 @@ int main(int argc, char * argv[]){
         	
         	
 			for (int i = 0; i < num_processes; i++) {
-				kill(processes[i], SIGUSR1);
+				if(kill(processes[i], SIGUSR1) == -1){
+					perror("Sending SIGUSR1");
+				}
 			}
 	
 			for (int i = 1; i < num_processes; i++) {
-				kill(processes[i], SIGSTOP);
+				if(kill(processes[i], SIGSTOP) == -1){
+					perror("SENDING SIGSTOP");
+				}
 			}
 
 			alarm(TIME_SLICE);
 	
-			kill(processes[0], SIGCONT);
+			if(kill(processes[0], SIGCONT) == -1){
+				perror("Sending SIGCONT");
+			}
 			printf("Process %d started\n", processes[0]);
 	
 			while (num_processes > 0) {
@@ -140,6 +152,9 @@ int main(int argc, char * argv[]){
 						current_process = 0;
 					}
 				}
+				else if (pid == -1){
+					perror("waitpid");
+				}
 			}
 	
 			free(processes);
@@ -149,14 +164,12 @@ int main(int argc, char * argv[]){
 		}
 		
 		else{
-			char error[] = "Not in file mode\n";
-			write(STDOUT_FILENO, error, sizeof(error));
+			perror("Not in file mode");
 			exit(EXIT_FAILURE);
 		}
 	}
 	else{
-		char error[] = "Wrong amount of parameters\n";
-		write(STDOUT_FILENO, error, sizeof(error));
+		perror("Wrong amount of parameters");
 		exit(EXIT_FAILURE);
 	}
 }
