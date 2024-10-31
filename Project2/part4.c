@@ -59,7 +59,7 @@ void print_process_info(pid_t pid) {
         fclose(file);
     }
     
-    printf("%-5d | %-10.2f | %-10d | %-15ld | %-15ld\n", pid, cpu_time, mem_usage, rchar, wchar);
+    printf("%-5d | %-12.2f | %-11d | %-16ld | %-15ld\n", pid, cpu_time, mem_usage, rchar, wchar);
 }
 
 void update_process_info(pid_t *processes, int num_processes) {
