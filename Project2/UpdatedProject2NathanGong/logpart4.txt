@@ -1,0 +1,340 @@
+==13981== Memcheck, a memory error detector
+==13981== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==13981== Using Valgrind-3.19.0 and LibVEX; rerun with -h for copyright info
+==13981== Command: ./part4 -f input.txt
+==13981== 
+total 796
+548 project-2-description-fall-2024.pdf
+  8 part4.c
+ 32 part4
+  4 part3.c
+ 28 part3
+  4 part2.c
+ 24 part2
+  4 part1.c
+ 24 part1
+  4 MCP.h
+  4 Makefile
+  4 logpart4.txt
+  4 logpart3.txt
+  4 logpart2.txt
+  4 logpart1.txt
+  4 iobound.c
+ 16 iobound
+  4 input.txt
+  8 .DS_Store
+  4 cpubound.c
+ 16 cpubound
+ 36 arm_example_executables.tar.gz
+  4 ..
+  4 .
+==13981== Conditional jump or move depends on uninitialised value(s)
+==13981==    at 0x488F9E8: rawmemchr (vg_replace_strmem.c:1548)
+==13981==    by 0x493A20F: _IO_str_init_static_internal (strops.c:41)
+==13981==    by 0x490C97F: _IO_strfile_read (strfile.h:95)
+==13981==    by 0x490C97F: __isoc99_sscanf (isoc99_sscanf.c:28)
+==13981==    by 0x1090CF: print_process_info (part4.c:32)
+==13981==    by 0x1092FB: update_process_info (part4.c:69)
+==13981==    by 0x10940B: alarm_handler (part4.c:82)
+==13981==    by 0x580BB9E7: ??? (in /usr/libexec/valgrind/memcheck-arm64-linux)
+==13981== 
+Command exec failed: No such file or directory
+==13984== 
+==13984== HEAP SUMMARY:
+==13984==     in use at exit: 612 bytes in 3 blocks
+==13984==   total heap usage: 4 allocs, 1 frees, 4,708 bytes allocated
+==13984== 
+==13984== LEAK SUMMARY:
+==13984==    definitely lost: 0 bytes in 0 blocks
+==13984==    indirectly lost: 0 bytes in 0 blocks
+==13984==      possibly lost: 0 bytes in 0 blocks
+==13984==    still reachable: 612 bytes in 3 blocks
+==13984==         suppressed: 0 bytes in 0 blocks
+==13984== Reachable blocks (those to which a pointer was found) are not shown.
+==13984== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==13984== 
+==13984== For lists of detected and suppressed errors, rerun with: -s
+==13984== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Process 13982 started
+Process 13982 terminated
+Process 13983 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13983 | 0.00         | 0           | 0                | 0              
+13984 | 0.00         | 0           | 0                | 0              
+13985 | 0.00         | 0           | 1                | 1              
+13986 | 0.00         | 0           | 1                | 2              
+
+Process 13984 continued
+Process 13984 terminated
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13983 | 0.00         | 0           | 0                | 0              
+13985 | 0.00         | 0           | 1                | 1              
+13986 | 0.00         | 0           | 1                | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13983 | 0.00         | 0           | 0                | 0              
+13985 | 0.00         | 0           | 1                | 1              
+13986 | 0.25         | 0           | 6173             | 2              
+
+Process 13983 continued
+Process 13983 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13983 | 0.00         | 0           | 6173             | 2              
+13985 | 0.00         | 0           | 1                | 1              
+13986 | 0.25         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13983 | 0.00         | 0           | 6173             | 2              
+13985 | 0.08         | 0           | 6173             | 247214082      
+13986 | 0.25         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13983 | 0.00         | 0           | 6173             | 2              
+13985 | 0.08         | 0           | 6173             | 247214082      
+13986 | 0.54         | 0           | 6173             | 2              
+
+Process 13983 continued
+Process 13983 terminated
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.08         | 0           | 6173             | 247214082      
+13986 | 0.54         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.08         | 0           | 6173             | 247214082      
+13986 | 0.80         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.15         | 0           | 6173             | 496177154      
+13986 | 0.80         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.15         | 0           | 6173             | 496177154      
+13986 | 1.03         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.27         | 0           | 6173             | 743841794      
+13986 | 1.03         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.27         | 0           | 6173             | 743841794      
+13986 | 1.33         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.32         | 0           | 6173             | 988909570      
+13986 | 1.33         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.32         | 0           | 6173             | 988909570      
+13986 | 1.59         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.39         | 0           | 6173             | 1233133570     
+13986 | 1.59         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.39         | 0           | 6173             | 1233133570     
+13986 | 1.84         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.44         | 0           | 6173             | 1468092418     
+13986 | 1.84         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.44         | 0           | 6173             | 1468092418     
+13986 | 2.08         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.55         | 0           | 6173             | 1698496514     
+13986 | 2.08         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.55         | 0           | 6173             | 1698496514     
+13986 | 2.32         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.64         | 0           | 6173             | 1924722690     
+13986 | 2.32         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.64         | 0           | 6173             | 1924722690     
+13986 | 2.57         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.70         | 0           | 6173             | 2159673346     
+13986 | 2.57         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.70         | 0           | 6173             | 2159673346     
+13986 | 2.84         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.76         | 0           | 6173             | 2400186370     
+13986 | 2.84         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.76         | 0           | 6173             | 2400186370     
+13986 | 3.07         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.82         | 0           | 6173             | 2648199170     
+13986 | 3.07         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.82         | 0           | 6173             | 2648199170     
+13986 | 3.33         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.90         | 0           | 6173             | 2894708738     
+139Process: 13986 - Begining calculation.
+Process: 13986 - Finished.
+Process: 13985 - Begining to write to file.
+Process: 13985 - Finished.
+86 | 3.33         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.90         | 0           | 6173             | 2894708738     
+13986 | 3.57         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.96         | 0           | 6173             | 3139964930     
+13986 | 3.57         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 0.96         | 0           | 6173             | 3139964930     
+13986 | 3.81         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 1.02         | 0           | 6173             | 3309293570     
+13986 | 3.81         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 1.02         | 0           | 6173             | 3309293570     
+13986 | 4.06         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 1.10         | 0           | 6173             | 3453067266     
+13986 | 4.06         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 1.10         | 0           | 6173             | 3453067266     
+13986 | 4.31         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 1.18         | 0           | 6173             | 3643727874     
+13986 | 4.31         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 1.18         | 0           | 6173             | 3643727874     
+13986 | 4.55         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 1.24         | 0           | 6173             | 3879403522     
+13986 | 4.55         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 1.24         | 0           | 6173             | 3879403522     
+13986 | 4.79         | 0           | 6173             | 2              
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 1.32         | 0           | 6173             | 4070707202     
+13986 | 4.79         | 0           | 6173             | 2              
+
+Process 13986 continued
+Process 13986 terminated
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 1.32         | 0           | 6173             | 4070707202     
+
+Process 13985 continued
+Process 13985 stopped
+PID   | CPU Time (s) | Memory (KB) | I/O Read (Chars) | I/O Write (Chars)
+13985 | 1.39         | 0           | 6173             | 4317917186     
+
+Process 13985 continued
+Process 13985 terminated
+==13981== 
+==13981== HEAP SUMMARY:
+==13981==     in use at exit: 0 bytes in 0 blocks
+==13981==   total heap usage: 369 allocs, 369 frees, 281,076 bytes allocated
+==13981== 
+==13981== All heap blocks were freed -- no leaks are possible
+==13981== 
+==13981== Use --track-origins=yes to see where uninitialised values come from
+==13981== For lists of detected and suppressed errors, rerun with: -s
+==13981== ERROR SUMMARY: 455 errors from 1 contexts (suppressed: 0 from 0)
