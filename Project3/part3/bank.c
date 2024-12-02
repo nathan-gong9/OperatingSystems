@@ -304,10 +304,10 @@ int main(int argc, char *argv[]) {
     int ret4 = pthread_mutex_init(&update_mutex, NULL);
     
     if(ret1 != 0 || ret2 != 0 || ret3 != 0 || ret4 != 0){
-    	printf("stupid"\n);
+    	printf("stupid\n");
     }
     
-    print("Iniitalized all primitives\n");
+    printf("Iniitalized all primitives\n");
     
     num_transactions = get_total_transaction_count(file);
     int transaction_slice = num_transactions / num_accounts;
