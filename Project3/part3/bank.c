@@ -139,9 +139,9 @@ void* process_transaction(void* arg) {
         pthread_mutex_unlock(&update_mutex);
 		
 		fscanf(file, " %c", &transaction_type);
-		pthread_mutex_lock(&transaction_mutex);
+		//pthread_mutex_lock(&transaction_mutex);
 		transaction_count++;
-		pthread_mutex_unlock(&transaction_mutex);
+		//pthread_mutex_unlock(&transaction_mutex);
         switch (transaction_type) {
             case 'D':
                 fscanf(file, "%s %s %lf", src_account, password, &amount);
