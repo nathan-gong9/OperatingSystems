@@ -219,7 +219,9 @@ void* process_transaction(void* arg) {
         if (total_transactions >= TRANSACTION_LIMIT && !bank_updating) {
         	printf("Updating bank\n");
         	bank_updating = true;
-            pthread_cond_signal(&update_condition);
+        	printf("About to signal update_condition\n");
+            pthread_cond_broadcast(&update_condition);
+            printf("signaled update_condition\n");
             total_transactions = 0;
         }
         pthread_mutex_unlock(&transaction_mutex);
