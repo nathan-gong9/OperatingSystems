@@ -139,9 +139,9 @@ void* process_transaction(void* arg) {
         pthread_mutex_unlock(&update_mutex);
 		
 		fscanf(file, " %c", &transaction_type);
-		//pthread_mutex_lock(&transaction_mutex);
+		pthread_mutex_lock(&transaction_mutex);
 		transaction_count++;
-		//pthread_mutex_unlock(&transaction_mutex);
+		pthread_mutex_unlock(&transaction_mutex);
         switch (transaction_type) {
             case 'D':
                 fscanf(file, "%s %s %lf", src_account, password, &amount);
@@ -230,6 +230,18 @@ void* process_transaction(void* arg) {
 
 void* update_balance(void* arg){
 	(void)arg;
+	
+	for (int i = 0; i < num_accounts; i++) {
+    char filename[22];
+    sprintf(filename, "Output/account%d.txt", i);
+    FILE *account_file = fopen(filename, "w");
+    if (account_file) {
+        fclose(account_file);
+    } else {
+        perror("Error clearing log file");
+    }
+}
+	
 	while (1) {
         pthread_mutex_lock(&update_mutex);
         pthread_cond_wait(&update_condition, &update_mutex);
@@ -245,7 +257,6 @@ void* update_balance(void* arg){
             accounts[i].balance += accounts[i].transaction_tracter * accounts[i].reward_rate;
             accounts[i].transaction_tracter = 0;
             
-            char filename[22];
             sprintf(filename, "Output/account%d.txt", i);
             FILE *account_file = fopen(filename, "a");
             if (account_file) {
