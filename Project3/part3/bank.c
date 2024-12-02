@@ -128,9 +128,8 @@ void* process_transaction(void* arg) {
         line_counter++;  // increment the line_counter as we traverse the file
     }
     
-    pthread_barrier_wait(&start_barrier);
-    printf("Starting at %d and ending at %d\n", start_index, end_index);
-	
+    pthread_barrier_wait(&start_barrier);	
+    
 	for(int i = start_index; i < end_index; i++) {
 		pthread_mutex_lock(&update_mutex);
         while (bank_updating) {
@@ -204,7 +203,7 @@ void* process_transaction(void* arg) {
                 transaction_account = find_account(src_account, password);
                 if (transaction_account) {
                 	pthread_mutex_lock(&transaction_account->ac_lock);
-                    //printf("Current Savings Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
+                    printf("Current Savings Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
                     pthread_mutex_unlock(&transaction_account->ac_lock);
                 }
                 break;
