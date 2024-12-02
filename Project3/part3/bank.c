@@ -101,6 +101,7 @@ int get_total_transaction_count(FILE *file) {
 
 // Process transactions
 void* process_transaction(void* arg) {
+	printf("Initialized process_transaction\n");
 	transaction_info* info = (transaction_info*) arg;
 
     FILE *file = fopen(info->file, "r");
@@ -128,6 +129,7 @@ void* process_transaction(void* arg) {
     }
     
     pthread_barrier_wait(&start_barrier);
+    printf("waiting at start barrier");
 
 	
 	for(int i = start_index; i < end_index; i++) {
@@ -296,10 +298,16 @@ int main(int argc, char *argv[]) {
 
     num_accounts = load_accounts(file); 
     
-    pthread_barrier_init(&start_barrier, NULL, num_accounts + 1);
-    pthread_cond_init(&worker_condition, NULL);
-    pthread_cond_init(&update_condition, NULL);
-    pthread_mutex_init(&update_mutex, NULL);
+    int ret1 = pthread_barrier_init(&start_barrier, NULL, num_accounts + 1);
+    int ret2 = pthread_cond_init(&worker_condition, NULL);
+    int ret3 = pthread_cond_init(&update_condition, NULL);
+    int ret4 = pthread_mutex_init(&update_mutex, NULL);
+    
+    if(ret1 != 0 || ret2 != 0 || ret3 != 0 || ret4 != 0){
+    	printf("stupid"\n);
+    }
+    
+    print("Iniitalized all primitives\n");
     
     num_transactions = get_total_transaction_count(file);
     int transaction_slice = num_transactions / num_accounts;
