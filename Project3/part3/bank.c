@@ -139,7 +139,9 @@ void* process_transaction(void* arg) {
         pthread_mutex_unlock(&update_mutex);
 		
 		fscanf(file, " %c", &transaction_type);
+		pthread_mutex_lock(&transaction_mutex);
 		transaction_count++;
+		pthread_mutex_unlock(&transaction_mutex);
         switch (transaction_type) {
             case 'D':
                 fscanf(file, "%s %s %lf", src_account, password, &amount);
@@ -202,7 +204,7 @@ void* process_transaction(void* arg) {
                 transaction_account = find_account(src_account, password);
                 if (transaction_account) {
                 	pthread_mutex_lock(&transaction_account->ac_lock);
-                    printf("Current Savings Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
+                    //printf("Current Savings Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
                     pthread_mutex_unlock(&transaction_account->ac_lock);
                 }
                 break;
@@ -215,7 +217,7 @@ void* process_transaction(void* arg) {
         pthread_mutex_lock(&transaction_mutex);
         if (total_transactions >= TRANSACTION_LIMIT && !bank_updating) {
         	bank_updating = true;
-            int ret = pthread_cond_signal(&update_condition);
+            pthread_cond_signal(&update_condition);
             total_transactions = 0;
         }
         pthread_mutex_unlock(&transaction_mutex);
@@ -251,10 +253,6 @@ void* update_balance(void* arg){
                 fclose(account_file);
             }
             pthread_mutex_unlock(&accounts[i].ac_lock);
-        }
-        
-        for(int i = 0; i < num_accounts; i++){
-        	printf("Account %d transaction tracter: %lf\n", i, accounts[i].transaction_tracter);
         }
 
         // Signal workers to continue processing
