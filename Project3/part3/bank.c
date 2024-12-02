@@ -221,7 +221,7 @@ void* process_transaction(void* arg) {
         	printf("About to signal update_condition\n");
             int ret = pthread_cond_signal(&update_condition);
             if(ret != 0){
-	      printf("ERROR WITH COND SIGNAL\n");
+            	printf("ERROR WITH COND SIGNAL\n");
             }
             printf("signaled update_condition\n");
             total_transactions = 0;
@@ -313,13 +313,12 @@ int main(int argc, char *argv[]) {
     
     printf("Iniitalized all primitives\n");
     
+    pthread_create(&bank_thread, NULL, update_balance, NULL);
+    
     num_transactions = get_total_transaction_count(file);
     int transaction_slice = num_transactions / num_accounts;
     int remain = num_transactions % num_accounts;
     int line_buffer = num_accounts * 5 + 1; //line buffer for account info provided in input file before transactions start
-    
-    pthread_create(&bank_thread, NULL, update_balance, NULL);
-    pthread_join(bank_thread, NULL);
     
     workers = (pthread_t *)malloc(sizeof(pthread_t) * num_accounts);
     transaction_info infos[num_accounts];
@@ -335,10 +334,13 @@ int main(int argc, char *argv[]) {
     
         pthread_create(&workers[i], NULL, (void*) process_transaction, (void*)&infos[i]);
     }
+    
 
     for (int j = 0; j < num_accounts; ++j){
         pthread_join(workers[j], NULL);
     }       
+    
+    pthread_join(bank_thread, NULL);
 
     save_balances_to_file("output.txt");
     
