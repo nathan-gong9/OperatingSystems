@@ -101,7 +101,7 @@ int get_total_transaction_count(FILE *file) {
 
 // Process transactions
 void* process_transaction(void* arg) {
-  //printf("Initialized process_transaction\n");
+    //printf("Initialized process_transaction\n");
 	transaction_info* info = (transaction_info*) arg;
 
     FILE *file = fopen(info->file, "r");
@@ -128,13 +128,12 @@ void* process_transaction(void* arg) {
         line_counter++;  // increment the line_counter as we traverse the file
     }
     
-    printf("about to wait at start_barrier");
     pthread_barrier_wait(&start_barrier);
-    printf("waiting at start barrier");
+    printf("waiting at start barrier\n");
 
 	
 	for(int i = start_index; i < end_index; i++) {
-	  //printf("processing a transaction\n");
+	    //printf("processing a transaction\n");
 		pthread_mutex_lock(&update_mutex);
         while (bank_updating) {
             pthread_cond_wait(&worker_condition, &update_mutex);
@@ -205,7 +204,7 @@ void* process_transaction(void* arg) {
                 transaction_account = find_account(src_account, password);
                 if (transaction_account) {
                 	pthread_mutex_lock(&transaction_account->ac_lock);
-                    printf("Current Savings Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
+                    //printf("Current Savings Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
                     pthread_mutex_unlock(&transaction_account->ac_lock);
                 }
                 break;
@@ -220,7 +219,10 @@ void* process_transaction(void* arg) {
         	printf("Updating bank\n");
         	bank_updating = true;
         	printf("About to signal update_condition\n");
-            pthread_cond_broadcast(&update_condition);
+            int ret = pthread_cond_signal(&update_condition);
+            if(ret != 0){
+            	printf("ERROR WITH COND SIGNAL\n")
+            }
             printf("signaled update_condition\n");
             total_transactions = 0;
         }
@@ -233,11 +235,12 @@ void* process_transaction(void* arg) {
 }
 
 void* update_balance(void* arg){
+	printf("In update_balance function\n");
 	(void)arg;
 	while (1) {
-		printf("In update_balance function while loop\n");
         pthread_mutex_lock(&update_mutex);
         pthread_cond_wait(&update_condition, &update_mutex);
+        printf("Waiting for update_condition\n");
         
         if (transaction_count >= num_transactions) {
         	pthread_mutex_unlock(&update_mutex);
@@ -315,6 +318,9 @@ int main(int argc, char *argv[]) {
     int remain = num_transactions % num_accounts;
     int line_buffer = num_accounts * 5 + 1; //line buffer for account info provided in input file before transactions start
     
+    pthread_create(&bank_thread, NULL, update_balance, NULL);
+    pthread_join(bank_thread, NULL);
+    
     workers = (pthread_t *)malloc(sizeof(pthread_t) * num_accounts);
     transaction_info infos[num_accounts];
     for (int i = 0; i < num_accounts; ++i)
@@ -333,9 +339,6 @@ int main(int argc, char *argv[]) {
     for (int j = 0; j < num_accounts; ++j){
         pthread_join(workers[j], NULL);
     }       
-
-	pthread_create(&bank_thread, NULL, update_balance, NULL);
-    pthread_join(bank_thread, NULL);
 
     save_balances_to_file("output.txt");
     
