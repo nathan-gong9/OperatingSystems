@@ -221,7 +221,7 @@ void* process_transaction(void* arg) {
         	printf("About to signal update_condition\n");
             int ret = pthread_cond_signal(&update_condition);
             if(ret != 0){
-            	printf("ERROR WITH COND SIGNAL\n")
+	      printf("ERROR WITH COND SIGNAL\n");
             }
             printf("signaled update_condition\n");
             total_transactions = 0;
