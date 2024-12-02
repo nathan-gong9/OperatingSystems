@@ -101,7 +101,7 @@ int get_total_transaction_count(FILE *file) {
 
 // Process transactions
 void* process_transaction(void* arg) {
-	printf("Initialized process_transaction\n");
+  //printf("Initialized process_transaction\n");
 	transaction_info* info = (transaction_info*) arg;
 
     FILE *file = fopen(info->file, "r");
@@ -134,7 +134,7 @@ void* process_transaction(void* arg) {
 
 	
 	for(int i = start_index; i < end_index; i++) {
-		printf("processing a transaction\n");
+	  //printf("processing a transaction\n");
 		pthread_mutex_lock(&update_mutex);
         while (bank_updating) {
             pthread_cond_wait(&worker_condition, &update_mutex);
