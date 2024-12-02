@@ -128,6 +128,7 @@ void* process_transaction(void* arg) {
         line_counter++;  // increment the line_counter as we traverse the file
     }
     
+    printf("about to wait at start_barrier");
     pthread_barrier_wait(&start_barrier);
     printf("waiting at start barrier");
 
@@ -231,8 +232,6 @@ void* process_transaction(void* arg) {
 
 void* update_balance(void* arg){
 	(void)arg;
-	
-	pthread_barrier_wait(&start_barrier);
 	while (1) {
 		printf("In update_balance function while loop\n");
         pthread_mutex_lock(&update_mutex);
@@ -298,7 +297,7 @@ int main(int argc, char *argv[]) {
 
     num_accounts = load_accounts(file); 
     
-    int ret1 = pthread_barrier_init(&start_barrier, NULL, num_accounts + 1);
+    int ret1 = pthread_barrier_init(&start_barrier, NULL, num_accounts);
     int ret2 = pthread_cond_init(&worker_condition, NULL);
     int ret3 = pthread_cond_init(&update_condition, NULL);
     int ret4 = pthread_mutex_init(&update_mutex, NULL);
