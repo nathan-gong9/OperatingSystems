@@ -232,9 +232,9 @@ void* update_balance(void* arg){
 	(void)arg;
 	
 	for (int i = 0; i < num_accounts; i++) {
-		char filename[22];
-		sprintf(filename, "Output/account%d.txt", i);
-		FILE *account_file = fopen(filename, "w");
+		char filename1[22];
+		sprintf(filename1, "Output/account%d.txt", i);
+		FILE *account_file = fopen(filename1, "w");
 		if (account_file) {
 			fclose(account_file);
 		} else {
@@ -258,8 +258,8 @@ void* update_balance(void* arg){
             accounts[i].transaction_tracter = 0;
             
             sprintf(filename, "Output/account%d.txt", i);
-            char filename[22];
-            FILE *account_file = fopen(filename, "a");
+            char filename2[22];
+            FILE *account_file = fopen(filename2, "a");
             if (account_file) {
                 fprintf(account_file, "Current Balance: %20.2f\n", accounts[i].balance);
                 fclose(account_file);
