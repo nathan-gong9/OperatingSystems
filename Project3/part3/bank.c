@@ -129,11 +129,8 @@ void* process_transaction(void* arg) {
     }
     
     pthread_barrier_wait(&start_barrier);
-    printf("waiting at start barrier\n");
-
 	
 	for(int i = start_index; i < end_index; i++) {
-	    //printf("processing a transaction\n");
 		pthread_mutex_lock(&update_mutex);
         while (bank_updating) {
             pthread_cond_wait(&worker_condition, &update_mutex);
@@ -204,7 +201,7 @@ void* process_transaction(void* arg) {
                 transaction_account = find_account(src_account, password);
                 if (transaction_account) {
                 	pthread_mutex_lock(&transaction_account->ac_lock);
-                    //printf("Current Savings Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
+                    printf("Current Savings Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
                     pthread_mutex_unlock(&transaction_account->ac_lock);
                 }
                 break;
@@ -218,12 +215,7 @@ void* process_transaction(void* arg) {
         if (total_transactions >= TRANSACTION_LIMIT && !bank_updating) {
         	printf("Updating bank\n");
         	bank_updating = true;
-        	printf("About to signal update_condition\n");
             int ret = pthread_cond_signal(&update_condition);
-            if(ret != 0){
-            	printf("ERROR WITH COND SIGNAL\n");
-            }
-            printf("signaled update_condition\n");
             total_transactions = 0;
         }
         pthread_mutex_unlock(&transaction_mutex);
@@ -302,17 +294,11 @@ int main(int argc, char *argv[]) {
 
     num_accounts = load_accounts(file); 
     
-    int ret1 = pthread_barrier_init(&start_barrier, NULL, num_accounts);
-    int ret2 = pthread_cond_init(&worker_condition, NULL);
-    int ret3 = pthread_cond_init(&update_condition, NULL);
-    int ret4 = pthread_mutex_init(&update_mutex, NULL);
-    
-    if(ret1 != 0 || ret2 != 0 || ret3 != 0 || ret4 != 0){
-    	printf("stupid\n");
-    }
-    
-    printf("Iniitalized all primitives\n");
-    
+    pthread_barrier_init(&start_barrier, NULL, num_accounts);
+    pthread_cond_init(&worker_condition, NULL);
+    pthread_cond_init(&update_condition, NULL);
+    pthread_mutex_init(&update_mutex, NULL);
+        
     pthread_create(&bank_thread, NULL, update_balance, NULL);
     
     num_transactions = get_total_transaction_count(file);
