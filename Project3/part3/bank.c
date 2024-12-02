@@ -232,7 +232,7 @@ void* update_balance(void* arg){
 	(void)arg;
 	
 	for (int i = 0; i < num_accounts; i++) {
-		char filename1[22];
+		char filename1[32];
 		sprintf(filename1, "Output/account%d.txt", i);
 		FILE *account_file = fopen(filename1, "w");
 		if (account_file) {
