@@ -235,6 +235,7 @@ void* update_balance(void* arg){
 		sprintf(filename1, "Output/account%d.txt", i);
 		FILE *account_file = fopen(filename1, "w");
 		if (account_file) {
+			fprintf(account_file, "account %d:\n", i);
 			fclose(account_file);
 		} else {
 			perror("Error clearing log file");
