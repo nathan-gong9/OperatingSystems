@@ -257,8 +257,8 @@ void* update_balance(void* arg){
             accounts[i].balance += accounts[i].transaction_tracter * accounts[i].reward_rate;
             accounts[i].transaction_tracter = 0;
             
-            sprintf(filename, "Output/account%d.txt", i);
             char filename2[22];
+            sprintf(filename2, "Output/account%d.txt", i);
             FILE *account_file = fopen(filename2, "a");
             if (account_file) {
                 fprintf(account_file, "Current Balance: %20.2f\n", accounts[i].balance);
