@@ -129,6 +129,7 @@ void* process_transaction(void* arg) {
     }
     
     pthread_barrier_wait(&start_barrier);
+    printf("Starting at %d and ending at %d\n", start_index, end_index);
 	
 	for(int i = start_index; i < end_index; i++) {
 		pthread_mutex_lock(&update_mutex);
@@ -213,7 +214,6 @@ void* process_transaction(void* arg) {
         
         pthread_mutex_lock(&transaction_mutex);
         if (total_transactions >= TRANSACTION_LIMIT && !bank_updating) {
-        	printf("Updating bank\n");
         	bank_updating = true;
             int ret = pthread_cond_signal(&update_condition);
             total_transactions = 0;
@@ -227,12 +227,10 @@ void* process_transaction(void* arg) {
 }
 
 void* update_balance(void* arg){
-	printf("In update_balance function\n");
 	(void)arg;
 	while (1) {
         pthread_mutex_lock(&update_mutex);
         pthread_cond_wait(&update_condition, &update_mutex);
-        printf("Waiting for update_condition\n");
         
         if (transaction_count >= num_transactions) {
         	pthread_mutex_unlock(&update_mutex);
@@ -244,7 +242,6 @@ void* update_balance(void* arg){
             pthread_mutex_lock(&accounts[i].ac_lock);
             accounts[i].balance += accounts[i].transaction_tracter * accounts[i].reward_rate;
             accounts[i].transaction_tracter = 0;
-            pthread_mutex_unlock(&accounts[i].ac_lock);
             
             char filename[22];
             sprintf(filename, "Output/account%d.txt", i);
@@ -253,6 +250,11 @@ void* update_balance(void* arg){
                 fprintf(account_file, "Current Balance: %20.2f\n", accounts[i].balance);
                 fclose(account_file);
             }
+            pthread_mutex_unlock(&accounts[i].ac_lock);
+        }
+        
+        for(int i = 0; i < num_accounts; i++){
+        	printf("Account %d transaction tracter: %lf\n", i, accounts[i].transaction_tracter);
         }
 
         // Signal workers to continue processing
