@@ -131,7 +131,7 @@ void* process_transaction(void* arg) {
 
 	
 	for(int i = start_index; i < end_index; i++) {
-		
+		printf("processing a transaction\n");
 		pthread_mutex_lock(&update_mutex);
         while (bank_updating) {
             pthread_cond_wait(&worker_condition, &update_mutex);
@@ -214,6 +214,7 @@ void* process_transaction(void* arg) {
         
         pthread_mutex_lock(&transaction_mutex);
         if (total_transactions >= TRANSACTION_LIMIT && !bank_updating) {
+        	printf("Updating bank\n");
         	bank_updating = true;
             pthread_cond_signal(&update_condition);
             total_transactions = 0;
@@ -231,6 +232,7 @@ void* update_balance(void* arg){
 	
 	pthread_barrier_wait(&start_barrier);
 	while (1) {
+		printf("In update_balance function while loop\n");
         pthread_mutex_lock(&update_mutex);
         pthread_cond_wait(&update_condition, &update_mutex);
         
