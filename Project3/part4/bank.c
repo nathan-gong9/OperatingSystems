@@ -30,7 +30,6 @@ int num_transactions;
 bool bank_updating = false;
 
 account accounts[MAX_ACCOUNTS];
-shared_account *shared_accounts;
 int num_accounts;
 
 
@@ -47,6 +46,8 @@ typedef struct {
     double reward_rate;
     double transaction_tracter;
 } shared_account;
+
+shared_account *shared_accounts;
 
 
 // Helper function to load account information from the input file
