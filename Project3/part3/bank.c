@@ -310,6 +310,8 @@ int main(int argc, char *argv[]) {
     pthread_cond_init(&worker_condition, NULL);
     pthread_cond_init(&update_condition, NULL);
     pthread_mutex_init(&update_mutex, NULL);
+    pthread_mutex_init(&transaction_mutex, NULL);
+
         
     pthread_create(&bank_thread, NULL, update_balance, NULL);
     
@@ -349,6 +351,8 @@ int main(int argc, char *argv[]) {
 	pthread_barrier_destroy(&start_barrier);
 	pthread_cond_destroy(&update_condition);
 	pthread_mutex_destroy(&update_mutex);
+	pthread_mutex_destroy(&transaction_mutex);
+	pthread_cond_destroy(&worker_condition);
 
     fclose(file);
     free(workers);
