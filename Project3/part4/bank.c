@@ -30,6 +30,7 @@ int num_transactions;
 bool bank_updating = false;
 
 account accounts[MAX_ACCOUNTS];
+shared_account *shared_accounts;
 int num_accounts;
 
 
@@ -375,7 +376,7 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 	
-	shared_account *shared_accounts = mmap(NULL, shm_size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+	shared_accounts = mmap(NULL, shm_size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
 	if (shared_accounts == MAP_FAILED) {
 		perror("mmap");
 		exit(1);
