@@ -30,7 +30,6 @@ int num_transactions;
 bool bank_updating = false;
 
 account accounts[MAX_ACCOUNTS];
-account puddles_accounts[MAX_ACCOUNTS];
 int num_accounts;
 
 
@@ -65,27 +64,6 @@ int load_accounts(FILE *file) {
         accounts[i].transaction_tracter = 0.0; // Initialize transaction tracker
         // Initialize the mutex lock for thread safety (even though not used in Part 1)
         pthread_mutex_init(&accounts[i].ac_lock, NULL);
-    }  
-
-    return account_num;
-}
-
-int load_puddles_accounts(FILE *file) {
-    int account_num;
-    fscanf(file, "%d", &account_num);
-
-    for (int i = 0; i < account_num; i++) {
-        char buffer[20];
-        int index_number;
-        fscanf(file, "%s %d", buffer, &index_number); // Skip "index" line
-        fscanf(file, "%s", puddles_accounts[i].account_number); // account number
-        fscanf(file, "%s", puddles_accounts[i].password); // Password
-        fscanf(file, "%lf", &puddles_accounts[i].balance); // Initial balance
-        puddles_acounts[i].balance *= 0.2;
-        puddles_accounts[i].reward_rate = 0.02;
-        puddles_accounts[i].transaction_tracter = 0.0; // Initialize transaction tracker
-        // Initialize the mutex lock for thread safety (even though not used in Part 1)
-        pthread_mutex_init(&puddles_accounts[i].ac_lock, NULL);
     }  
 
     return account_num;
@@ -264,6 +242,20 @@ void* process_transaction(void* arg) {
 }
 
 void* update_balance(void* arg) {
+	(void)arg;
+	
+	for (int i = 0; i < num_accounts; i++) {
+		char filename1[32];
+		sprintf(filename1, "Output/account%d.txt", i);
+		FILE *account_file = fopen(filename1, "w");
+		if (account_file) {
+			fprintf(account_file, "account %d:\n", i);
+			fclose(account_file);
+		} else {
+			perror("Error clearing log file");
+		}
+    }
+    
     while (1) {
         pthread_mutex_lock(&update_mutex);
         pthread_cond_wait(&update_condition, &update_mutex);
@@ -278,6 +270,14 @@ void* update_balance(void* arg) {
             pthread_mutex_lock(&accounts[i].ac_lock);
             accounts[i].balance += accounts[i].transaction_tracter * accounts[i].reward_rate;
             accounts[i].transaction_tracter = 0.0;
+            
+            char filename2[22];
+            sprintf(filename2, "Output/account%d.txt", i);
+            FILE *account_file = fopen(filename2, "a");
+            if (account_file) {
+                fprintf(account_file, "Current Balance: %20.2f\n", accounts[i].balance);
+                fclose(account_file);
+            }
             pthread_mutex_unlock(&accounts[i].ac_lock);
         }
 
@@ -292,11 +292,25 @@ void* update_balance(void* arg) {
 }
 
 void* update_puddles_balance(void* arg) {
+	(void)arg;
+	
+	for (int i = 0; i < num_accounts; i++) {
+		char filename1[32];
+		sprintf(filename1, "savings/account%d.txt", i);
+		FILE *account_file = fopen(filename1, "w");
+		if (account_file) {
+			fprintf(account_file, "account %d:\n", i);
+			fclose(account_file);
+		} else {
+			perror("Error clearing log file");
+		}
+    }
+	
     while (1) {
         pthread_mutex_lock(&update_mutex);
         pthread_cond_wait(&puddles_update_condition, &update_mutex);
 
-        pthread_mutex_lock(&shared_accounts_mutex);
+        pthread_mutex_lock(&shared_mutex);
         for (int i = 0; i < num_accounts; i++) {
             shared_accounts[i].balance += shared_accounts[i].transaction_tracter * shared_accounts[i].reward_rate;
             shared_accounts[i].transaction_tracter = 0.0;
@@ -308,7 +322,7 @@ void* update_puddles_balance(void* arg) {
                 fclose(account_file);
             }
         }
-        pthread_mutex_unlock(&shared_accounts_mutex);
+        pthread_mutex_unlock(&shared_mutex);
 
         pthread_mutex_unlock(&update_mutex);
     }
