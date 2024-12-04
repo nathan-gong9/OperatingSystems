@@ -213,7 +213,7 @@ void* process_transaction(void* arg) {
                 transaction_account = find_account(src_account, password);
                 if (transaction_account) {
                 	pthread_mutex_lock(&transaction_account->ac_lock);
-                    //printf("Current Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
+                    printf("Current Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
                     pthread_mutex_unlock(&transaction_account->ac_lock);
                 }
                 break;
@@ -302,14 +302,15 @@ void* update_puddles_balance(void* arg) {
     while (1) {
         pthread_mutex_lock(&puddles_update_mutex);
         pthread_cond_wait(&puddles_update_condition, &puddles_update_mutex);
+        
+        if (transaction_count >= num_transactions) {
+            pthread_mutex_unlock(&update_mutex);
+            break;
+        }
 
         pthread_mutex_lock(&shared_mutex);
         for (int i = 0; i < num_accounts; i++) {
             accounts[i].puddles_balance += accounts[i].transaction_tracter * accounts[i].puddles_reward_rate;
-            if(i == 0){
-            	printf("balance: %.2f\n", accounts[i].puddles_balance);
-            	printf("transaction_tracter: %.2f\n", accounts[i].transaction_tracter);
-            }
             accounts[i].transaction_tracter = 0.0;
             
             char filename[32];
