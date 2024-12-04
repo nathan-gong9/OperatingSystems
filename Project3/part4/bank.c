@@ -220,7 +220,7 @@ void* process_transaction(void* arg) {
                 transaction_account = find_account(src_account, password);
                 if (transaction_account) {
                 	pthread_mutex_lock(&transaction_account->ac_lock);
-                    printf("Current Savings Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
+                    //printf("Current Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
                     pthread_mutex_unlock(&transaction_account->ac_lock);
                 }
                 break;
@@ -315,9 +315,9 @@ void* update_puddles_balance(void* arg) {
         for (int i = 0; i < num_accounts; i++) {
             shared_accounts[i].balance += shared_accounts[i].transaction_tracter * shared_accounts[i].reward_rate;
             if(i == 0){
-            	printf("balance: %.2f", shared_accounts[i].balance);
-            	printf("reward rate: %.2f", shared_accounts[i].reward_rate);
-            	printf("transaction_tracter: %.2f", shared_accounts[i].transaction_tracter);
+            	printf("balance: %.2f\n", shared_accounts[i].balance);
+            	printf("reward rate: %.2f\n", shared_accounts[i].reward_rate);
+            	printf("transaction_tracter: %.2f\n", shared_accounts[i].transaction_tracter);
             }
             shared_accounts[i].transaction_tracter = 0.0;
             char filename[32];
