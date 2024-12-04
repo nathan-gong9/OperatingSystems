@@ -19,14 +19,6 @@ typedef struct {
     int end_index;
 } transaction_info;
 
-typedef struct {
-    char account_number[MAX_ID_LENGTH];
-    char password[MAX_PASSWORD_LENGTH];
-    double balance;
-    double reward_rate;
-    double transaction_tracter;
-} shared_account;
-
 // Worker and bank threads
 pthread_t *workers;
 pthread_t bank_thread;
@@ -41,8 +33,7 @@ pthread_mutex_t puddles_update_mutex;
 pthread_mutex_t transaction_mutex;
 pthread_mutex_t shared_mutex;
 
-account accounts[MAX_ACCOUNTS];
-shared_account *shared_accounts;
+account *accounts;
 
 int num_accounts;
 int total_transactions = 0;
@@ -64,6 +55,8 @@ int load_accounts(FILE *file) {
         fscanf(file, "%s", accounts[i].password); // Password
         fscanf(file, "%lf", &accounts[i].balance); // Initial balance
         fscanf(file, "%lf", &accounts[i].reward_rate); // Reward rate
+        accounts[i].puddles_balance = accounts[i].balance * 0.2;
+        accounts[i].puddles_reward_rate = 0.02;
         accounts[i].transaction_tracter = 0.0; // Initialize transaction tracker
         // Initialize the mutex lock for thread safety (even though not used in Part 1)
         pthread_mutex_init(&accounts[i].ac_lock, NULL);
@@ -313,18 +306,17 @@ void* update_puddles_balance(void* arg) {
 
         pthread_mutex_lock(&shared_mutex);
         for (int i = 0; i < num_accounts; i++) {
-            shared_accounts[i].balance += shared_accounts[i].transaction_tracter * shared_accounts[i].reward_rate;
+            accounts[i].puddles_balance += accounts[i].transaction_tracter * accounts[i].puddles_reward_rate;
             if(i == 0){
-            	printf("balance: %.2f\n", shared_accounts[i].balance);
-            	printf("reward rate: %.2f\n", shared_accounts[i].reward_rate);
-            	printf("transaction_tracter: %.2f\n", shared_accounts[i].transaction_tracter);
+            	printf("balance: %.2f\n", shared_accounts[i].puddles_balance);
+            	printf("transaction_tracter: %.2f\n", accounts[i].transaction_tracter);
             }
-            shared_accounts[i].transaction_tracter = 0.0;
+            accounts[i].transaction_tracter = 0.0;
             char filename[32];
             sprintf(filename, "savings/account%d.txt", i);
             FILE *account_file = fopen(filename, "a");
             if (account_file) {
-                fprintf(account_file, "Current Savings Balance: %.2f\n", shared_accounts[i].balance);
+                fprintf(account_file, "Current Savings Balance: %.2f\n", accounts[i].puddles_balance);
                 fclose(account_file);
             }
         }
@@ -366,8 +358,6 @@ int main(int argc, char *argv[]) {
         perror("Error opening input file");
         return 1;
     }
-
-    num_accounts = load_accounts(file); 
     
 	int shm_fd = shm_open("/bank_shm", O_CREAT | O_RDWR, 0666);
 	if (shm_fd == -1) {
@@ -375,26 +365,20 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 	
-	size_t shm_size = sizeof(shared_account) * num_accounts;
+	size_t shm_size = sizeof(shared_account) * MAX_ACCOUNTS;
 	
 	if (ftruncate(shm_fd, shm_size) == -1) {
 		perror("ftruncate");
 		exit(1);
 	}
 	
-	shared_accounts = mmap(NULL, shm_size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
-	if (shared_accounts == MAP_FAILED) {
+	accounts = mmap(NULL, shm_size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+	if (accounts == MAP_FAILED) {
 		perror("mmap");
 		exit(1);
 	}
 	
-	for (int i = 0; i < num_accounts; i++) {
-		strcpy(shared_accounts[i].account_number, accounts[i].account_number);
-		strcpy(shared_accounts[i].password, accounts[i].password);
-		shared_accounts[i].balance = accounts[i].balance * 0.2;
-		shared_accounts[i].reward_rate = 0.02;
-		shared_accounts[i].transaction_tracter = 0.0;
-	}
+	num_accounts = load_accounts(file); 
 
     pthread_barrier_init(&start_barrier, NULL, num_accounts);
     pthread_cond_init(&worker_condition, NULL);

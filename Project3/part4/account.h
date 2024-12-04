@@ -8,6 +8,9 @@ typedef struct
     double balance;
     double reward_rate;
     
+    double puddles_balance;
+    double puddles_reward_rate; 
+    
     double transaction_tracter;
 
     char out_file[64];
