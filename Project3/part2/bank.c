@@ -183,12 +183,13 @@ void* process_transaction(void* arg) {
 void* update_balance(void* arg){
 	(void)arg;
 	int* update_count = malloc(sizeof(int));
+	*update_count = 0;
 	for(int i = 0; i < num_accounts; i++){
 		pthread_mutex_lock(&accounts[i].ac_lock);
 		accounts[i].balance += accounts[i].transaction_tracter * accounts[i].reward_rate;
 		pthread_mutex_unlock(&accounts[i].ac_lock);
 	}
-	update_count += 1;
+	*update_count += 1;
 	pthread_exit(update_count);
 }
 
