@@ -282,8 +282,8 @@ void* update_balance(void* arg) {
         bank_updating = false;
         pthread_mutex_unlock(&update_mutex);
     }
-    return NULL;
     printf("finished duck update\n");
+    return NULL;
 }
 
 void* update_puddles_balance(void* arg) {
