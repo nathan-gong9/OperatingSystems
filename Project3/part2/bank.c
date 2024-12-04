@@ -253,7 +253,7 @@ int main(int argc, char *argv[]) {
 
 	pthread_create(&bank_thread, NULL, update_balance, NULL);
     pthread_join(bank_thread, (void**)&bank_result);
-    printf("Updated accounts %d times\n", *bank_result)
+    printf("Updated accounts %d times\n", *bank_result);
 
     save_balances_to_file("output.txt");
     
