@@ -300,6 +300,7 @@ void* update_puddles_balance(void* arg) {
         
         if (transaction_count >= num_transactions) {
             pthread_mutex_unlock(&update_mutex);
+            pthread_mutex_unlock(&puddles_update_mutex);
             break;
         }
 
