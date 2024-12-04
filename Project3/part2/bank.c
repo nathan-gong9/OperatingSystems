@@ -187,7 +187,6 @@ void* update_balance(void* arg){
 		pthread_mutex_lock(&accounts[i].ac_lock);
 		accounts[i].balance += accounts[i].transaction_tracter * accounts[i].reward_rate;
 		pthread_mutex_unlock(&accounts[i].ac_lock);
-		update_count++;
 	}
 	update_count++;
 	pthread_exit(update_count);
@@ -254,6 +253,7 @@ int main(int argc, char *argv[]) {
 	pthread_create(&bank_thread, NULL, update_balance, NULL);
     pthread_join(bank_thread, (void**)&bank_result);
     printf("Updated accounts %d times\n", *bank_result);
+    free(bank_result);
 
     save_balances_to_file("output.txt");
     
@@ -264,6 +264,5 @@ int main(int argc, char *argv[]) {
     fclose(file);
     free(workers);
     free(infos);
-    free(bank_result);
     return 0;
 }
