@@ -254,12 +254,13 @@ void* update_balance(void* arg) {
     }
     
     while (1) {
-    	if (puddles_done) {
+        pthread_mutex_lock(&update_mutex);
+        pthread_cond_wait(&update_condition, &update_mutex);
+        
+        if (puddles_done) {
             pthread_mutex_unlock(&update_mutex);
             break;
         }
-        pthread_mutex_lock(&update_mutex);
-        pthread_cond_wait(&update_condition, &update_mutex);
 
         // Update Duck Bank accounts
         for (int i = 0; i < num_accounts; i++) {
@@ -327,7 +328,9 @@ void* update_puddles_balance(void* arg) {
         pthread_cond_broadcast(&worker_condition);
     }
     puddles_done = true;
+    pthread_cond_signal(&update_condition);
     printf("finished puddles update\n");
+    printf("puddles_done: %d\n", puddles_done);
     return NULL;
 }
 
