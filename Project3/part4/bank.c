@@ -288,7 +288,6 @@ void* update_balance(void* arg) {
 
         bank_updating = false;
         pthread_mutex_unlock(&update_mutex);
-        pthread_cond_broadcast(&worker_condition);
     }
     return NULL;
 }
@@ -315,6 +314,11 @@ void* update_puddles_balance(void* arg) {
         pthread_mutex_lock(&shared_mutex);
         for (int i = 0; i < num_accounts; i++) {
             shared_accounts[i].balance += shared_accounts[i].transaction_tracter * shared_accounts[i].reward_rate;
+            if(i == 0){
+            	printf("balance: %.2f", shared_accounts[i].balance);
+            	printf("reward rate: %.2f", shared_accounts[i].reward_rate);
+            	printf("transaction_tracter: %.2f", shared_accounts[i].transaction_tracter);
+            }
             shared_accounts[i].transaction_tracter = 0.0;
             char filename[32];
             sprintf(filename, "savings/account%d.txt", i);
@@ -326,7 +330,9 @@ void* update_puddles_balance(void* arg) {
         }
         pthread_mutex_unlock(&shared_mutex);
         pthread_mutex_unlock(&puddles_update_mutex);
+        pthread_cond_broadcast(&worker_condition);
     }
+    printf("finished puddles update\n");
     return NULL;
 }
 
@@ -369,7 +375,7 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 	
-	size_t shm_size = sizeof(shared_account) * MAX_ACCOUNTS;
+	size_t shm_size = sizeof(shared_account) * num_accounts;
 	
 	if (ftruncate(shm_fd, shm_size) == -1) {
 		perror("ftruncate");
@@ -390,8 +396,6 @@ int main(int argc, char *argv[]) {
 		shared_accounts[i].transaction_tracter = 0.0;
 	}
 
-
-    
     pthread_barrier_init(&start_barrier, NULL, num_accounts);
     pthread_cond_init(&worker_condition, NULL);
     pthread_cond_init(&update_condition, NULL);
