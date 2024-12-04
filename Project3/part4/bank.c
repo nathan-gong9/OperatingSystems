@@ -13,26 +13,6 @@
 #define MAX_ID_LENGTH 17
 #define TRANSACTION_LIMIT 5000
 
-// Worker and bank threads
-pthread_t *workers;
-pthread_t bank_thread;
-
-pthread_barrier_t start_barrier;
-pthread_cond_t update_condition;
-pthread_cond_t puddles_update_condition;
-pthread_mutex_t update_mutex;
-pthread_mutex_t transaction_mutex;
-pthread_cond_t worker_condition;
-pthread_mutex_t shared_mutex;
-int total_transactions = 0;
-int transaction_count = 0;
-int num_transactions;
-bool bank_updating = false;
-
-account accounts[MAX_ACCOUNTS];
-int num_accounts;
-
-
 typedef struct {
     char file[256];
     int start_index;
@@ -47,7 +27,28 @@ typedef struct {
     double transaction_tracter;
 } shared_account;
 
+// Worker and bank threads
+pthread_t *workers;
+pthread_t bank_thread;
+pthread_t puddles_bank_thread;
+
+pthread_barrier_t start_barrier;
+pthread_cond_t worker_condition;
+pthread_cond_t update_condition;
+pthread_cond_t puddles_update_condition;
+pthread_mutex_t update_mutex;
+pthread_mutex_t puddles_update_mutex;
+pthread_mutex_t transaction_mutex;
+pthread_mutex_t shared_mutex;
+
+account accounts[MAX_ACCOUNTS];
 shared_account *shared_accounts;
+
+int num_accounts;
+int total_transactions = 0;
+int transaction_count = 0;
+int num_transactions;
+bool bank_updating = false;
 
 
 // Helper function to load account information from the input file
@@ -283,7 +284,6 @@ void* update_balance(void* arg) {
             pthread_mutex_unlock(&accounts[i].ac_lock);
         }
 
-        // Signal Puddles update
         pthread_cond_signal(&puddles_update_condition);
 
         bank_updating = false;
@@ -309,8 +309,8 @@ void* update_puddles_balance(void* arg) {
     }
 	
     while (1) {
-        pthread_mutex_lock(&update_mutex);
-        pthread_cond_wait(&puddles_update_condition, &update_mutex);
+        pthread_mutex_lock(&puddles_update_mutex);
+        pthread_cond_wait(&puddles_update_condition, &puddles_update_mutex);
 
         pthread_mutex_lock(&shared_mutex);
         for (int i = 0; i < num_accounts; i++) {
@@ -325,8 +325,7 @@ void* update_puddles_balance(void* arg) {
             }
         }
         pthread_mutex_unlock(&shared_mutex);
-
-        pthread_mutex_unlock(&update_mutex);
+        pthread_mutex_unlock(&puddles_update_mutex);
     }
     return NULL;
 }
@@ -398,10 +397,12 @@ int main(int argc, char *argv[]) {
     pthread_cond_init(&update_condition, NULL);
     pthread_cond_init(&puddles_update_condition, NULL);
     pthread_mutex_init(&update_mutex, NULL);
+    pthread_mutex_init(&puddles_update_mutex, NULL);
     pthread_mutex_init(&shared_mutex, NULL);
     pthread_mutex_init(&transaction_mutex, NULL);
         
     pthread_create(&bank_thread, NULL, update_balance, NULL);
+    pthread_create(&puddles_bank_thread, NULL, update_puddles_balance, NULL);
     
     num_transactions = get_total_transaction_count(file);
     int transaction_slice = num_transactions / num_accounts;
@@ -429,6 +430,7 @@ int main(int argc, char *argv[]) {
     }       
     
     pthread_join(bank_thread, NULL);
+    pthread_join(puddles_bank_thread, NULL);
 
     save_balances_to_file("output.txt");
     
@@ -442,6 +444,7 @@ int main(int argc, char *argv[]) {
     pthread_cond_destroy(&worker_condition);
     pthread_cond_destroy(&puddles_update_condition);
     pthread_mutex_destroy(&update_mutex);
+    pthread_mutex_destroy(&puddles_update_mutex);
     pthread_mutex_destroy(&shared_mutex);
 	pthread_mutex_destroy(&transaction_mutex);
 
