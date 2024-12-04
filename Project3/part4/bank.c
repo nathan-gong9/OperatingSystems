@@ -265,7 +265,6 @@ void* update_balance(void* arg) {
         for (int i = 0; i < num_accounts; i++) {
             pthread_mutex_lock(&accounts[i].ac_lock);
             accounts[i].balance += accounts[i].transaction_tracter * accounts[i].reward_rate;
-            accounts[i].transaction_tracter = 0.0;
             
             char filename2[22];
             sprintf(filename2, "Output/account%d.txt", i);
@@ -312,6 +311,7 @@ void* update_puddles_balance(void* arg) {
             	printf("transaction_tracter: %.2f\n", accounts[i].transaction_tracter);
             }
             accounts[i].transaction_tracter = 0.0;
+            
             char filename[32];
             sprintf(filename, "savings/account%d.txt", i);
             FILE *account_file = fopen(filename, "a");
