@@ -9,7 +9,6 @@
 #define MAX_PASSWORD_LENGTH 9
 #define MAX_ID_LENGTH 17
 
-// Worker and bank threads
 pthread_t *workers;
 pthread_t bank_thread;
 
@@ -22,7 +21,6 @@ typedef struct {
     int end_index;
 } transaction_info;
 
-// Helper function to load account information from the input file
 int load_accounts(FILE *file) {
     int account_num;
     fscanf(file, "%d", &account_num);
@@ -30,13 +28,12 @@ int load_accounts(FILE *file) {
     for (int i = 0; i < account_num; i++) {
         char buffer[20];
         int index_number;
-        fscanf(file, "%s %d", buffer, &index_number); // Skip "index" line
-        fscanf(file, "%s", accounts[i].account_number); // account number
-        fscanf(file, "%s", accounts[i].password); // Password
-        fscanf(file, "%lf", &accounts[i].balance); // Initial balance
-        fscanf(file, "%lf", &accounts[i].reward_rate); // Reward rate
-        accounts[i].transaction_tracter = 0.0; // Initialize transaction tracker
-        // Initialize the mutex lock for thread safety (even though not used in Part 1)
+        fscanf(file, "%s %d", buffer, &index_number);
+        fscanf(file, "%s", accounts[i].account_number);
+        fscanf(file, "%s", accounts[i].password);
+        fscanf(file, "%lf", &accounts[i].balance);
+        fscanf(file, "%lf", &accounts[i].reward_rate);
+        accounts[i].transaction_tracter = 0.0;
         pthread_mutex_init(&accounts[i].ac_lock, NULL);
     }  
 
@@ -52,7 +49,6 @@ account *find_account_helper(const char *account_num, const char *password, bool
         	}
         	else{
 				if(strcmp(accounts[i].password, password) == 0){
-					//printf("Correct password: %s versus %s\n", password, accounts[i].password);
 					return &accounts[i];
 				}
 			}
@@ -112,7 +108,7 @@ void* process_transaction(void* arg) {
 	int line_counter = 0;
 	char buffer[256];
 	while (line_counter < info->start_index && fgets(buffer, sizeof(buffer), file)) {
-        line_counter++;  // increment the line_counter as we traverse the file
+        line_counter++;
     }
 	
 	
@@ -135,7 +131,7 @@ void* process_transaction(void* arg) {
                 transaction_account = find_account(src_account, password);
                 if (transaction_account) {
                 	pthread_mutex_lock(&transaction_account->ac_lock);
-                    transaction_account->balance -= amount; // Allow overdrawing for this part
+                    transaction_account->balance -= amount;
                     transaction_account->transaction_tracter += amount;
                     pthread_mutex_unlock(&transaction_account->ac_lock);
                 }
@@ -161,8 +157,6 @@ void* process_transaction(void* arg) {
                     
                     destination_account->balance += amount;
                     pthread_mutex_unlock(&destination_account->ac_lock);
-                    
-                    //destination_account->transaction_tracter += amount; // Track transaction
                 }
                 break;
 
@@ -206,7 +200,6 @@ void save_balances_to_file(const char *filename) {
     }
 
     for (int i = 0; i < num_accounts; i++) {
-        // Print the account index and balance in the desired format
         fprintf(file, "%d balance:\t%.2f\n", i, accounts[i].balance);
         fprintf(file, "\n");
     }
@@ -231,7 +224,7 @@ int main(int argc, char *argv[]) {
     int num_transactions = get_total_transaction_count(file);
     int transaction_slice = num_transactions / num_accounts;
     int remain = num_transactions % num_accounts;
-    int line_buffer = num_accounts * 5 + 1; //line buffer for account info provided in input file before transactions start
+    int line_buffer = num_accounts * 5 + 1;
     
     workers = (pthread_t *)malloc(sizeof(pthread_t) * num_accounts);
     transaction_info **infos = malloc(num_accounts * sizeof(transaction_info *));

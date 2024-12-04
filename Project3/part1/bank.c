@@ -9,7 +9,6 @@
 #define MAX_PASSWORD_LENGTH 9
 #define MAX_ID_LENGTH 17
 
-// Helper function to load account information from the input file
 int load_accounts(FILE *file, account accounts[]) {
     int num_accounts;
     fscanf(file, "%d", &num_accounts);
@@ -17,20 +16,18 @@ int load_accounts(FILE *file, account accounts[]) {
     for (int i = 0; i < num_accounts; i++) {
         char buffer[20];
         int index_number;
-        fscanf(file, "%s %d", buffer, &index_number); // Skip "index" line
-        fscanf(file, "%s", accounts[i].account_number); // account number
-        fscanf(file, "%s", accounts[i].password); // Password
-        fscanf(file, "%lf", &accounts[i].balance); // Initial balance
-        fscanf(file, "%lf", &accounts[i].reward_rate); // Reward rate
-        accounts[i].transaction_tracter = 0.0; // Initialize transaction tracker
-        // Initialize the mutex lock for thread safety (even though not used in Part 1)
+        fscanf(file, "%s %d", buffer, &index_number);
+        fscanf(file, "%s", accounts[i].account_number);
+        fscanf(file, "%s", accounts[i].password);
+        fscanf(file, "%lf", &accounts[i].balance);
+        fscanf(file, "%lf", &accounts[i].reward_rate);
+        accounts[i].transaction_tracter = 0.0;
         pthread_mutex_init(&accounts[i].ac_lock, NULL);
     }
 
     return num_accounts;
 }
 
-// Find account by account number and verify password
 account *find_account_helper(account accounts[], int num_accounts, const char *account_num, const char *password, bool check_password) {
     for (int i = 0; i < num_accounts; i++) {
         if (strcmp(accounts[i].account_number, account_num) == 0) {
@@ -39,7 +36,6 @@ account *find_account_helper(account accounts[], int num_accounts, const char *a
         	}
         	else{
 				if(strcmp(accounts[i].password, password) == 0){
-					//printf("Correct password: %s versus %s\n", password, accounts[i].password);
 					return &accounts[i];
 				}
 			}
@@ -53,7 +49,6 @@ account *find_account(account accounts[], int num_accounts, const char *account_
 	return find_account_helper(accounts, num_accounts, account_num, password, true);
 }
 
-// Process transactions
 void process_transactions(FILE *file, account accounts[], int num_accounts) {
     char transaction_type;
     char src_account[MAX_ID_LENGTH];
@@ -84,7 +79,7 @@ void process_transactions(FILE *file, account accounts[], int num_accounts) {
                 fscanf(file, "%s %s %lf", src_account, password, &amount);
                 account *withdraw_account = find_account(accounts, num_accounts, src_account, password);
                 if (withdraw_account) {
-                    withdraw_account->balance -= amount; // Allow overdrawing for this part
+                    withdraw_account->balance -= amount;
                     withdraw_account->transaction_tracter += amount;
                     //transaction_count++;
                 }
@@ -101,7 +96,6 @@ void process_transactions(FILE *file, account accounts[], int num_accounts) {
                     source_account->balance -= amount;
                     destination_account->balance += amount;
                     source_account->transaction_tracter += amount;
-                    //destination_account->transaction_tracter += amount; // Track transaction
                     //transaction_count++;
                 }
                 else{
@@ -131,7 +125,6 @@ void process_transactions(FILE *file, account accounts[], int num_accounts) {
     //printf("Invalid transaction count: %d\n", invalid_count);
 }
 
-// Save final account balances to file
 void save_balances_to_file(const char *filename, account accounts[], int num_accounts) {
     FILE *file = fopen(filename, "w");
     if (file == NULL) {
@@ -140,7 +133,6 @@ void save_balances_to_file(const char *filename, account accounts[], int num_acc
     }
 
     for (int i = 0; i < num_accounts; i++) {
-        // Print the account index and balance in the desired format
         fprintf(file, "%d balance:\t%.2f\n", i, accounts[i].balance);
         fprintf(file, "\n");
     }
