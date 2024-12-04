@@ -1,20 +1,20 @@
-0 balance:	3111685.13
+0 balance:	3111591.68
 
-1 balance:	2016708.08
+1 balance:	2016639.53
 
-2 balance:	3248739.41
+2 balance:	3248702.20
 
-3 balance:	3889896.71
+3 balance:	3889855.50
 
-4 balance:	2164242.04
+4 balance:	2164204.31
 
-5 balance:	2119930.00
+5 balance:	2119792.86
 
-6 balance:	2206150.76
+6 balance:	2206094.86
 
-7 balance:	2306013.02
+7 balance:	2305830.31
 
-8 balance:	2788273.79
+8 balance:	2788208.47
 
-9 balance:	2011539.14
+9 balance:	2011527.07
 
