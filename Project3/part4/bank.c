@@ -282,7 +282,7 @@ void* update_balance(void* arg) {
         bank_updating = false;
         pthread_mutex_unlock(&update_mutex);
     }
-    //printf("finished duck update\n");
+    printf("finished duck update\n");
     return NULL;
 }
 
@@ -307,7 +307,6 @@ void* update_puddles_balance(void* arg) {
         
         if (transaction_count >= num_transactions) {
             pthread_mutex_unlock(&puddles_update_mutex);
-            puddles_done = true;
             break;
         }
 
@@ -328,7 +327,8 @@ void* update_puddles_balance(void* arg) {
         pthread_mutex_unlock(&puddles_update_mutex);
         pthread_cond_broadcast(&worker_condition);
     }
-    //printf("finished puddles update\n");
+    printf("finished puddles update\n");
+    puddles_done = true;
     return NULL;
 }
 
