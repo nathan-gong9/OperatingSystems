@@ -215,12 +215,11 @@ void* process_transaction(void* arg) {
     
     fclose(file);
     pthread_exit(NULL);
-    return NULL;
 }
 
 void* update_balance(void* arg){
 	(void)arg;
-	int update_count;
+	int update_count = 0;
 	
 	for (int i = 0; i < num_accounts; i++) {
 		char filename1[32];

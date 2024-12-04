@@ -226,7 +226,6 @@ void* process_transaction(void* arg) {
     
     fclose(file);
     pthread_exit(NULL);
-    return NULL;
 }
 
 void* update_balance(void* arg) {
