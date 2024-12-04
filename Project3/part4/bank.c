@@ -307,7 +307,7 @@ void* update_puddles_balance(void* arg) {
         for (int i = 0; i < num_accounts; i++) {
             accounts[i].puddles_balance += accounts[i].transaction_tracter * accounts[i].puddles_reward_rate;
             if(i == 0){
-            	printf("balance: %.2f\n", shared_accounts[i].puddles_balance);
+            	printf("balance: %.2f\n", accounts[i].puddles_balance);
             	printf("transaction_tracter: %.2f\n", accounts[i].transaction_tracter);
             }
             accounts[i].transaction_tracter = 0.0;
@@ -365,7 +365,7 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 	
-	size_t shm_size = sizeof(shared_account) * MAX_ACCOUNTS;
+	size_t shm_size = sizeof(account) * MAX_ACCOUNTS;
 	
 	if (ftruncate(shm_fd, shm_size) == -1) {
 		perror("ftruncate");
