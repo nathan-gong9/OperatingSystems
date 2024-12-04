@@ -266,7 +266,7 @@ void* update_balance(void* arg) {
             pthread_mutex_lock(&accounts[i].ac_lock);
             accounts[i].balance += accounts[i].transaction_tracter * accounts[i].reward_rate;
             
-            char filename2[22];
+            char filename2[32];
             sprintf(filename2, "Output/account%d.txt", i);
             FILE *account_file = fopen(filename2, "a");
             if (account_file) {
