@@ -219,7 +219,8 @@ void* process_transaction(void* arg) {
 
 void* update_balance(void* arg){
 	(void)arg;
-	int update_count = 0;
+	int* update_count = malloc(sizeof(int));
+	*update_count = 0;
 	
 	for (int i = 0; i < num_accounts; i++) {
 		char filename1[32];
@@ -256,7 +257,7 @@ void* update_balance(void* arg){
             }
             pthread_mutex_unlock(&accounts[i].ac_lock);
         }
-        update_count++;
+        *update_count++;
 
         bank_updating = false;
 		pthread_mutex_unlock(&update_mutex);
@@ -328,7 +329,11 @@ int main(int argc, char *argv[]) {
         pthread_join(workers[j], NULL);
     }       
     
-    pthread_join(bank_thread, NULL);
+    int* bank_result;
+    
+    pthread_join(bank_thread, (void**)&bank_result);
+    printf("Updated accounts %d times\n", *bank_result);
+    free(bank_result)
 
     save_balances_to_file("output.txt");
     
