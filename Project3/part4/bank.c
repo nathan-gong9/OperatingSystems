@@ -231,7 +231,7 @@ void* process_transaction(void* arg) {
 
 void* update_balance(void* arg) {
 	(void)arg;
-	static int update_count[num_accounts];
+	int update_count = 0;
 	
 	for (int i = 0; i < num_accounts; i++) {
 		char filename1[32];
@@ -265,9 +265,10 @@ void* update_balance(void* arg) {
                 fprintf(account_file, "Current Balance: %20.2f\n", accounts[i].balance);
                 fclose(account_file);
             }
-            update_count[i]++;
             pthread_mutex_unlock(&accounts[i].ac_lock);
         }
+        
+        update_count++;
 
         pthread_cond_signal(&puddles_update_condition);
 
