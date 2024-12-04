@@ -254,13 +254,12 @@ void* update_balance(void* arg) {
     }
     
     while (1) {
-        pthread_mutex_lock(&update_mutex);
-        pthread_cond_wait(&update_condition, &update_mutex);
-        
-        if (puddles_done) {
+    	if (puddles_done) {
             pthread_mutex_unlock(&update_mutex);
             break;
         }
+        pthread_mutex_lock(&update_mutex);
+        pthread_cond_wait(&update_condition, &update_mutex);
 
         // Update Duck Bank accounts
         for (int i = 0; i < num_accounts; i++) {
