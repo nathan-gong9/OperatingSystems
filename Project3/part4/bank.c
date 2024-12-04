@@ -214,7 +214,7 @@ void* process_transaction(void* arg) {
                 transaction_account = find_account(src_account, password);
                 if (transaction_account) {
                 	pthread_mutex_lock(&transaction_account->ac_lock);
-                    //printf("Current Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
+                    printf("Current Balance for %s: %.2f\n", transaction_account->account_number, transaction_account->balance);
                     pthread_mutex_unlock(&transaction_account->ac_lock);
                 }
                 break;
@@ -282,7 +282,6 @@ void* update_balance(void* arg) {
         bank_updating = false;
         pthread_mutex_unlock(&update_mutex);
     }
-    printf("finished duck update\n");
     return NULL;
 }
 
@@ -329,8 +328,6 @@ void* update_puddles_balance(void* arg) {
     }
     puddles_done = true;
     pthread_cond_signal(&update_condition);
-    printf("finished puddles update\n");
-    printf("puddles_done: %d\n", puddles_done);
     return NULL;
 }
 
