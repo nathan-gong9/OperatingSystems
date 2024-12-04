@@ -188,7 +188,7 @@ void* update_balance(void* arg){
 		accounts[i].balance += accounts[i].transaction_tracter * accounts[i].reward_rate;
 		pthread_mutex_unlock(&accounts[i].ac_lock);
 	}
-	update_count++;
+	*update_count += 1;
 	pthread_exit(update_count);
 }
 
