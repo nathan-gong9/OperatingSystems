@@ -113,7 +113,7 @@ void process_transactions(FILE *file, account accounts[], int num_accounts) {
                 fscanf(file, "%s %s", src_account, password);
                 account *check_account = find_account(accounts, num_accounts, src_account, password);
                 if (check_account) {
-                    	printf("Current Savings Balance for %s: %.2f\n", check_account->account_number, check_account->balance);
+                    	printf("Current Balance for %s: %.2f\n", check_account->account_number, check_account->balance);
                     //transaction_count++;
                 }
                 else{
