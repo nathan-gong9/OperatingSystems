@@ -40,6 +40,7 @@ int total_transactions = 0;
 int transaction_count = 0;
 int num_transactions;
 bool bank_updating = false;
+bool puddles_done = false;
 
 
 // Helper function to load account information from the input file
@@ -256,7 +257,7 @@ void* update_balance(void* arg) {
         pthread_mutex_lock(&update_mutex);
         pthread_cond_wait(&update_condition, &update_mutex);
         
-        if (transaction_count >= num_transactions) {
+        if (puddles_done) {
             pthread_mutex_unlock(&update_mutex);
             break;
         }
@@ -282,6 +283,7 @@ void* update_balance(void* arg) {
         pthread_mutex_unlock(&update_mutex);
     }
     return NULL;
+    printf("finished duck update\n");
 }
 
 void* update_puddles_balance(void* arg) {
