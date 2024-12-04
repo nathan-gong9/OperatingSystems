@@ -256,11 +256,6 @@ void* update_balance(void* arg) {
         pthread_mutex_lock(&update_mutex);
         pthread_cond_wait(&update_condition, &update_mutex);
 
-        if (transaction_count >= num_transactions) {
-            pthread_mutex_unlock(&update_mutex);
-            break;
-        }
-
         // Update Duck Bank accounts
         for (int i = 0; i < num_accounts; i++) {
             pthread_mutex_lock(&accounts[i].ac_lock);
