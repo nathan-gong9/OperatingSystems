@@ -262,7 +262,7 @@ void* update_balance(void* arg){
 		pthread_mutex_unlock(&update_mutex);
 		pthread_cond_broadcast(&worker_condition);
     }
-    return update_count;
+    pthread_exit(update_count);
 }
 
 void save_balances_to_file(const char *filename) {

@@ -274,7 +274,7 @@ void* update_balance(void* arg) {
         bank_updating = false;
         pthread_mutex_unlock(&update_mutex);
     }
-    return update_count;
+    pthread_exit(update_count);
 }
 
 void* update_puddles_balance(void* arg) {
@@ -320,7 +320,7 @@ void* update_puddles_balance(void* arg) {
     }
     puddles_done = true;
     pthread_cond_signal(&update_condition);
-    return NULL;
+    pthread_exit(NULL);
 }
 
 void save_balances_to_file(const char *filename) {
