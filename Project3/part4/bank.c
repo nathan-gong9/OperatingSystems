@@ -268,7 +268,7 @@ void* update_balance(void* arg) {
             pthread_mutex_unlock(&accounts[i].ac_lock);
         }
         
-        *update_count++;
+        *update_count += 1;
 
         pthread_cond_signal(&puddles_update_condition);
 
@@ -416,7 +416,7 @@ int main(int argc, char *argv[]) {
     
     printf("Updated accounts %d times\n", *bank_result);
     
-    free(bank_result)
+    free(bank_result);
 
     save_balances_to_file("output.txt");
     
